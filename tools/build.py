@@ -1,4 +1,4 @@
-"""Build the static pages: index.html (講義) and quiz/index.html (隨機測驗)."""
+"""Build the static pages: index.html (講義), quiz/ (隨機測驗), notes/ (我的疑問)."""
 import json, os, runpy
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -25,7 +25,16 @@ def main():
     os.makedirs(os.path.join(ROOT, 'quiz'), exist_ok=True)
     with open(os.path.join(ROOT, 'quiz', 'index.html'), 'w', encoding='utf-8') as f:
         f.write(page(quiz))
-    print(f'built index.html and quiz/index.html ({len(bank)} questions)')
+
+    cells = runpy.run_path(os.path.join(ROOT, 'tools', 'cells.py'))['out']
+    notes = open(os.path.join(ROOT, 'src', 'notes.html'), encoding='utf-8').read()
+    for k, v in cells.items():
+        notes = notes.replace('{{%s}}' % k, v)
+    assert '{{' not in notes
+    os.makedirs(os.path.join(ROOT, 'notes'), exist_ok=True)
+    with open(os.path.join(ROOT, 'notes', 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(page(notes))
+    print(f'built index.html, quiz/ ({len(bank)} questions), notes/')
 
 if __name__ == '__main__':
     main()

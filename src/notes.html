@@ -1,0 +1,227 @@
+<title>我的皮膚疑問</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+<style>
+/* Layout: a question-and-answer notebook — each question is a section; cell close-ups sit beside their explanation, stacking on phones. */
+:root{
+  --bg:#f3f6f6; --paper:#ffffff; --fg:#1b2a2d; --muted:#5a6b6f; --line:#d3dfe0;
+  --accent:#17736f; --accent-soft:#d9eeec; --mark:#b8475d; --mark-soft:#f8e3e7;
+  --epi:#f1c7ad; --corn:#d99b7c; --derm:#f8e1d6; --mel:#5b3825;
+  --lymph:#cfe6f2; --lipid:#f7e7b0; --granule:#4a2f22; --lamellar:#e0a526;
+  --glass:#f6e6db; --glass-hi:#fffaf6; --shine:#ffffff; --seb:#eea93c; --sweat:#5aa6cf; --hair:#3b2a22;
+  --l-corn:#e4ae92; --l-luc:#fbf1ea; --l-gran:#eebc9f; --l-spin:#f3cdb6; --l-basal:#d9967a;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a1c; --paper:#182326; --fg:#e2ebeb; --muted:#9db0b3; --line:#2b3b3e;
+  --accent:#5fc6c0; --accent-soft:#1b3b3a; --mark:#f08ca0; --mark-soft:#3b2229;
+  --epi:#8c5b48; --corn:#b67b60; --derm:#5a3f37; --mel:#1e100a;
+  --lymph:#23455a; --lipid:#5a4b24; --granule:#1c0f09; --lamellar:#e0a526;
+  --glass:#9a7462; --glass-hi:#c9a896; --shine:#ffffff; --seb:#d69638; --sweat:#63b3db; --hair:#e0cdbf;
+  --l-corn:#a8715a; --l-luc:#c9a896; --l-gran:#8f5e4a; --l-spin:#7a4f3e; --l-basal:#5e3a2c;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111a1c; --paper:#182326; --fg:#e2ebeb; --muted:#9db0b3; --line:#2b3b3e;
+  --accent:#5fc6c0; --accent-soft:#1b3b3a; --mark:#f08ca0; --mark-soft:#3b2229;
+  --epi:#8c5b48; --corn:#b67b60; --derm:#5a3f37; --mel:#1e100a;
+  --lymph:#23455a; --lipid:#5a4b24; --granule:#1c0f09; --lamellar:#e0a526;
+  --glass:#9a7462; --glass-hi:#c9a896; --shine:#ffffff; --seb:#d69638; --sweat:#63b3db; --hair:#e0cdbf;
+  --l-corn:#a8715a; --l-luc:#c9a896; --l-gran:#8f5e4a; --l-spin:#7a4f3e; --l-basal:#5e3a2c;
+  color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.75;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:960px;margin:0 auto}
+header{padding-block:40px 24px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.crumbs{display:flex;gap:16px;font-size:14px}
+.crumbs a{color:var(--muted);text-decoration:none}
+.crumbs a:hover{color:var(--accent)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,5vw,40px);line-height:1.25;margin:.4em 0 .2em;text-wrap:balance}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding:0;list-style:none}
+.toc a{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:var(--fg);text-decoration:none;font-size:14px;background:var(--paper)}
+.toc a:hover{border-color:var(--accent)}
+
+section.qa{padding-block:36px 8px;scroll-margin-top:12px}
+.qlabel{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--accent)}
+h2{font-family:var(--serif);font-weight:900;font-size:clamp(22px,3.4vw,28px);line-height:1.35;margin:.2em 0 .6em;text-wrap:balance}
+h3{font-family:var(--serif);font-weight:600;font-size:20px;margin:0 0 4px}
+p,ul{max-width:66ch}
+ul{padding-left:1.25em;margin:6px 0}
+li{margin:3px 0}
+li::marker{color:var(--accent)}
+.hl{background:linear-gradient(transparent 58%,var(--accent-soft) 58%);font-weight:700}
+.q{display:inline-block;font-size:11.5px;line-height:1;padding:3px 5px 2px;border-radius:4px;border:1px solid var(--line);color:var(--muted);vertical-align:2px;margin-left:3px;white-space:nowrap}
+.extra{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:4px;padding:1px 5px;margin-left:4px;white-space:nowrap}
+
+.journey{display:grid;gap:14px;margin-top:18px}
+.layer{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px}
+.layer.focus{border-color:var(--accent)}
+.layer svg{display:block;width:100%;height:auto}
+.layer .body{min-width:0}
+.step{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.06em}
+.layer.focus .step{color:var(--accent)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:8px 0 0}
+.kv dt{font-size:13px;font-weight:700;color:var(--muted);padding-top:2px;white-space:nowrap}
+.kv dd{margin:0}
+.up{text-align:center;color:var(--muted);font-size:13px;margin:-4px 0}
+@media (max-width:760px){.layer{grid-template-columns:minmax(0,1fr)}}
+
+figure{margin:18px 0;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px}
+figure .scroll{overflow-x:auto}
+figure svg{display:block;width:100%;height:auto;min-width:600px}
+figcaption{font-size:13.5px;color:var(--muted);margin-top:8px}
+ol.reasons{max-width:66ch;padding-left:1.4em;margin:10px 0}
+ol.reasons li{margin:10px 0}
+ol.reasons li::marker{font-weight:700;color:var(--accent)}
+.box{background:var(--accent-soft);border-radius:10px;padding:14px 16px;max-width:66ch;margin:16px 0}
+.box b{font-family:var(--serif)}
+footer{margin-top:40px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+
+/* svg */
+svg text{font-family:var(--sans);fill:var(--fg)}
+.t{font-size:14px;font-weight:700}
+.t-b{font-size:16px;font-weight:700}
+.t-s{font-size:12.5px;fill:var(--muted)}
+.frame{fill:none;stroke:var(--line)}
+.tag-bg{fill:var(--paper);opacity:.88}
+.bg-cell{fill:var(--epi)} .bg-derm{fill:var(--derm)} .bg-lymph{fill:var(--lymph)} .bg-lipid{fill:var(--lipid)}
+.cell{fill:var(--epi);stroke:var(--corn);stroke-width:1.5}
+.nuc{fill:var(--mel);opacity:.55}
+.nuc-dying{fill:var(--granule);opacity:.8}
+.cap{fill:none;stroke:var(--mel);stroke-width:3;stroke-linecap:round;opacity:.7}
+.split{stroke:var(--corn);stroke-width:1.5;stroke-dasharray:4 3}
+.mel{fill:var(--mel)} .dendrite{fill:none;stroke:var(--mel);stroke-width:4;stroke-linecap:round}
+.membrane{stroke:var(--fg);stroke-width:3}
+.spine{stroke:var(--corn);stroke-width:1.6;stroke-linecap:round}
+.granule{fill:var(--granule)} .lamellar{fill:var(--lamellar)}
+.glass{stroke:var(--corn);stroke-width:.8}
+.shine{fill:var(--shine);opacity:.28}
+.corneo{fill:var(--corn);stroke:var(--corn);stroke-width:1}
+.l-corn{fill:var(--l-corn)} .l-luc{fill:var(--l-luc);stroke:var(--corn);stroke-width:.8} .l-gran{fill:var(--l-gran)} .l-spin{fill:var(--l-spin)} .l-basal{fill:var(--l-basal)}
+.lead{stroke:var(--muted);stroke-width:1}
+.hair{fill:none;stroke:var(--hair);stroke-width:5;stroke-linecap:round}
+.sebum{fill:var(--seb)} .sweat{fill:none;stroke:var(--sweat);stroke-width:3}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+</style>
+
+<div class="wrap">
+  <header>
+    <nav class="crumbs"><a href="../">← 講義</a><a href="../quiz/">隨機測驗</a></nav>
+    <h1>我的皮膚疑問</h1>
+    <p class="sub">讀題庫時想不通的地方，整理成一題一題。<span class="q">皮 36</span>這類標籤是題庫出處；<span class="extra">補充</span>是題庫沒考、幫助理解的內容。</p>
+    <ul class="toc">
+      <li><a href="#layers">Q1 表皮各層為什麼這樣命名？</a></li>
+      <li><a href="#lucidum">Q2 透明層為什麼只有手掌腳底有？</a></li>
+    </ul>
+  </header>
+
+  <section class="qa" id="layers">
+    <div class="qlabel">Q1</div>
+    <h2>透明層、顆粒層、有棘層為什麼這樣命名？各自的作用是什麼？</h2>
+    <p>三個名字都來自<b>顯微鏡下看到的樣子</b>。把表皮想成細胞從基底層出生、一路往上推、最後死掉剝落的過程（約 28 天<span class="q">皮 17</span>），每一層就是細胞在不同階段的長相。</p>
+
+    <div class="journey">
+      <article class="layer">
+        {{C_BASAL}}
+        <div class="body">
+          <div class="step">階段 1・出生</div>
+          <h3>基底層</h3>
+          <ul>
+            <li>一排直立的柱狀細胞，細胞核大，會不斷<b>分裂</b>產生新細胞<span class="q">皮 99</span></li>
+            <li>黑色素細胞在這層，伸出觸手把黑色素送給鄰居，蓋在細胞核上方防紫外線<span class="q">皮 36</span></li>
+          </ul>
+        </div>
+      </article>
+      <div class="up">↑ 往上推</div>
+
+      <article class="layer focus">
+        {{C_SPIN}}
+        <div class="body">
+          <div class="step">階段 2・長大</div>
+          <h3>有棘層</h3>
+          <dl class="kv">
+            <dt>命名</dt><dd>細胞之間靠「<b>橋粒</b>」這種連接點互相拉住<span class="extra">補充</span>。做切片時細胞會縮水，連接點被拉成一根根小刺，整個細胞看起來像長滿刺，所以叫<span class="hl">有棘</span>層。</dd>
+            <dt>作用</dt><dd>
+              <ul>
+                <li>表皮<b>最厚</b>的一層，細胞手拉手，讓表皮耐拉扯、不易破<span class="q">皮 108</span></li>
+                <li>細胞縫隙有<b>淋巴液</b>流通，幫忙輸送養分<span class="q">皮 108</span></li>
+                <li>下方細胞仍會分裂，和基底層一起產生新細胞<span class="q">皮 41</span></li>
+                <li>有負責免疫的蘭格罕細胞<span class="extra">補充</span></li>
+              </ul></dd>
+          </dl>
+        </div>
+      </article>
+      <div class="up">↑ 往上推</div>
+
+      <article class="layer focus">
+        {{C_GRAN}}
+        <div class="body">
+          <div class="step">階段 3・準備角化</div>
+          <h3>顆粒層</h3>
+          <dl class="kv">
+            <dt>命名</dt><dd>細胞裡塞滿一顆顆深色的<b>角質素</b>顆粒<span class="q">皮 27</span>，學名是角質透明蛋白顆粒<span class="extra">補充</span>，看起來像撒了一把<span class="hl">顆粒</span>。</dd>
+            <dt>作用</dt><dd>
+              <ul>
+                <li>細胞從這層<b>開始角化</b><span class="q">皮 85</span>：細胞變扁、細胞核縮小分解，細胞開始死亡</li>
+                <li>細胞邊緣的小泡（圖中黃點）會把<b>脂質</b>釋放到細胞縫隙，形成防水屏障，也就是角質層游離脂肪的來源<span class="q">皮 146</span><span class="extra">補充</span></li>
+              </ul></dd>
+          </dl>
+        </div>
+      </article>
+      <div class="up">↑ 往上推</div>
+
+      <article class="layer focus">
+        {{C_LUC}}
+        <div class="body">
+          <div class="step">階段 4・變透明（只在手掌腳底）</div>
+          <h3>透明層</h3>
+          <dl class="kv">
+            <dt>命名</dt><dd>細胞核已經消失<span class="q">皮 94</span>。顆粒層的角質素顆粒轉變成一種會折光的物質「角母素」<span class="extra">補充</span>，細胞內部均勻一致，在顯微鏡下是一條亮亮的<span class="hl">透明</span>帶。</dd>
+            <dt>作用</dt><dd>
+              <ul>
+                <li>細胞排得非常緊密，<b>抗摩擦、防止水分滲透</b></li>
+                <li>只在<b>手掌、腳底</b><span class="q">皮 110</span>，讓那裡的皮膚看起來較厚、較白<span class="q">皮 159</span>。原因見 Q2</li>
+              </ul></dd>
+          </dl>
+        </div>
+      </article>
+      <div class="up">↑ 往上推</div>
+
+      <article class="layer">
+        {{C_CORN}}
+        <div class="body">
+          <div class="step">階段 5・死亡剝落</div>
+          <h3>角質層</h3>
+          <ul>
+            <li>扁平、無核的死細胞<span class="q">皮 89</span>，像磚塊一樣疊起來，中間的脂質像水泥</li>
+            <li>最上面會自然剝落<span class="q">皮 47</span>，不需要刻意磨掉<span class="q">皮 165</span></li>
+          </ul>
+        </div>
+      </article>
+    </div>
+
+    <div class="box"><b>一句話記：</b>有棘層細胞「手拉手」撐起結構 → 顆粒層細胞「囤顆粒」準備角化 → 透明層細胞「變透明」（只有手掌腳底）→ 角質層「死掉剝落」。</div>
+  </section>
+
+  <section class="qa" id="lucidum">
+    <div class="qlabel">Q2</div>
+    <h2>透明層為什麼只有手掌、腳底有？</h2>
+    <p>因為手掌和腳底是全身唯一的<span class="hl">厚皮膚</span>，角質化的過程特別長，才長得出一條看得見的透明層。</p>
+    <figure>
+      <div class="scroll">{{THICKTHIN}}</div>
+      <figcaption>示意圖，厚度沒有照比例。薄皮膚的顆粒層很快就直接變成角質層，中間沒有一段夠厚、看得出來的透明帶。</figcaption>
+    </figure>
+    <ol class="reasons">
+      <li><b>透明層是角化過程的「過渡帶」。</b>顆粒層細胞死掉後，角質素顆粒會先變成會折光的角母素，再變成角質層的角蛋白。透明層就是正在轉變中的那幾層細胞。<span class="extra">補充</span></li>
+      <li><b>一般皮膚太薄，這段過渡一下就結束。</b>臉、手臂的表皮只有約 0.1 mm，顆粒層細胞很快就直接變成角質層，過渡帶只有一兩層細胞，在顯微鏡下看不出獨立的一條。<span class="extra">補充</span></li>
+      <li><b>手掌腳底天天承受摩擦和壓力。</b>抓東西、走路的衝擊讓這兩處長出全身最厚的表皮<span class="q">皮 100</span>，角質層非常厚。過渡的細胞層數也跟著變多，才厚到看得見一條透明帶。</li>
+      <li><b>手掌腳底沒有皮脂腺</b><span class="q">皮 8</span>，<b>也沒有毛髮</b>，缺少皮脂膜的油脂保護。緊密的透明層加上厚角質，替代了防水和抗摩擦的功能。</li>
+      <li><b>結果：</b>手掌腳底比其他地方的皮膚更厚、更結實、更白<span class="q">皮 159</span>。</li>
+    </ol>
+    <div class="box"><b>考試這樣想：</b>看到「無核細胞、只在手掌腳底」就選<b>透明層</b><span class="q">皮 110</span>；問「手掌腳底為何較厚較白」也是<b>透明層</b><span class="q">皮 159</span>。</div>
+  </section>
+
+  <footer>有新的疑問可以繼續加在這一頁。</footer>
+</div>
