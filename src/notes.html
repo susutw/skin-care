@@ -11,6 +11,7 @@
   --lymph:#cfe6f2; --lipid:#f7e7b0; --granule:#4a2f22; --lamellar:#e0a526;
   --glass:#f6e6db; --glass-hi:#fffaf6; --shine:#ffffff; --seb:#eea93c; --sweat:#5aa6cf; --hair:#3b2a22;
   --l-corn:#e4ae92; --l-luc:#fbf1ea; --l-gran:#eebc9f; --l-spin:#f3cdb6; --l-basal:#d9967a;
+  --foll:#f3d2c0; --bug:#7a4fb3; --inflame:#e8898a; --pus:#fbf3d6; --keratin:#c98a6c; --air:#e8f2f5; --film:#f2d27a; --bad:#9aa7ab; --immune:#ffffff;
   --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
   --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
 }
@@ -21,6 +22,7 @@
   --lymph:#23455a; --lipid:#5a4b24; --granule:#1c0f09; --lamellar:#e0a526;
   --glass:#9a7462; --glass-hi:#c9a896; --shine:#ffffff; --seb:#d69638; --sweat:#63b3db; --hair:#e0cdbf;
   --l-corn:#a8715a; --l-luc:#c9a896; --l-gran:#8f5e4a; --l-spin:#7a4f3e; --l-basal:#5e3a2c;
+  --foll:#744c3d; --bug:#c39af0; --inflame:#8e3b40; --pus:#d8cfa8; --keratin:#c08466; --air:#1d2c31; --film:#a88a36; --bad:#6d7b7f; --immune:#e8e8e8;
   color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#111a1c; --paper:#182326; --fg:#e2ebeb; --muted:#9db0b3; --line:#2b3b3e;
@@ -29,6 +31,7 @@
   --lymph:#23455a; --lipid:#5a4b24; --granule:#1c0f09; --lamellar:#e0a526;
   --glass:#9a7462; --glass-hi:#c9a896; --shine:#ffffff; --seb:#d69638; --sweat:#63b3db; --hair:#e0cdbf;
   --l-corn:#a8715a; --l-luc:#c9a896; --l-gran:#8f5e4a; --l-spin:#7a4f3e; --l-basal:#5e3a2c;
+  --foll:#744c3d; --bug:#c39af0; --inflame:#8e3b40; --pus:#d8cfa8; --keratin:#c08466; --air:#1d2c31; --film:#a88a36; --bad:#6d7b7f; --immune:#e8e8e8;
   color-scheme:dark }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.75;padding-inline:16px;padding-block:0 64px}
@@ -103,6 +106,32 @@ svg text{font-family:var(--sans);fill:var(--fg)}
 .lead{stroke:var(--muted);stroke-width:1}
 .hair{fill:none;stroke:var(--hair);stroke-width:5;stroke-linecap:round}
 .sebum{fill:var(--seb)} .sweat{fill:none;stroke:var(--sweat);stroke-width:3}
+.surface{fill:none;stroke:var(--corn);stroke-width:3}
+.inflame{fill:var(--inflame);opacity:.55}
+.duct{stroke:var(--seb);stroke-width:4}
+.foll{fill:var(--foll);stroke:var(--corn);stroke-width:1.5}
+.foll-broken{fill:none;stroke:var(--corn);stroke-width:2;stroke-dasharray:5 4}
+.pus{fill:var(--pus);stroke:var(--corn);stroke-width:1}
+.hairline{stroke:var(--hair);stroke-width:2.5;stroke-linecap:round}
+.sebum-drop{fill:var(--seb)} .sebum-fill{fill:var(--seb);opacity:.75}
+.keratin{fill:var(--keratin)}
+.bug{fill:var(--bug)}
+.closed{fill:none;stroke:var(--corn);stroke-width:3}
+.blackhead{fill:var(--granule)}
+.immune{fill:var(--immune);stroke:var(--inflame);stroke-width:1.2}
+.arrow{stroke:var(--muted);stroke-width:1.5} .arrowhead{fill:var(--muted)}
+.bg-air{fill:var(--air)} .film{fill:var(--film)}
+.bad{fill:var(--bad)} .nope{stroke:var(--mark);stroke-width:3;stroke-linecap:round}
+.grid{stroke:var(--line);stroke-width:1}
+.axis{font-size:12px;fill:var(--muted);font-variant-numeric:tabular-nums}
+.row{font-size:14px;fill:var(--fg)}
+.val{font-size:12.5px;fill:var(--muted)}
+.bar{fill:var(--accent)}
+.hit{fill:transparent}
+.mark:hover .bar{filter:brightness(1.15)}
+.answer{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;max-width:66ch;margin:12px 0 18px}
+.answer b{font-family:var(--serif)}
+h4{font-size:17px;margin:26px 0 6px;font-family:var(--serif);font-weight:600}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 </style>
 
@@ -114,6 +143,8 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius
     <ul class="toc">
       <li><a href="#layers">Q1 表皮各層為什麼這樣命名？</a></li>
       <li><a href="#lucidum">Q2 透明層為什麼只有手掌腳底有？</a></li>
+      <li><a href="#sebum">Q3 皮脂能抑菌，為什麼還會長痘？</a></li>
+      <li><a href="#acne-time">Q4 青春痘多久形成、多久消？</a></li>
     </ul>
   </header>
 
@@ -221,6 +252,63 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius
       <li><b>結果：</b>手掌腳底比其他地方的皮膚更厚、更結實、更白<span class="q">皮 159</span>。</li>
     </ol>
     <div class="box"><b>考試這樣想：</b>看到「無核細胞、只在手掌腳底」就選<b>透明層</b><span class="q">皮 110</span>；問「手掌腳底為何較厚較白」也是<b>透明層</b><span class="q">皮 159</span>。</div>
+  </section>
+
+  <section class="qa" id="sebum">
+    <div class="qlabel">Q3</div>
+    <h2>皮脂為什麼可以抑菌？既然能抑菌，為什麼還會長青春痘？</h2>
+    <div class="answer"><b>簡答：</b>皮脂的抑菌作用只在<b>皮膚表面</b>有效，而且擋的是外來的壞菌。青春痘發生在<b>被堵住的毛孔裡面</b>，主角「痤瘡桿菌」是皮膚本來就有的常在菌，不怕這種環境，還把皮脂當食物。</div>
+
+    <h4>皮脂為什麼能抑菌</h4>
+    <ol class="reasons">
+      <li><b>皮脂膜是弱酸性。</b>皮脂和汗液混合成皮脂膜<span class="q">皮 122</span>，呈弱酸性<span class="q">皮 73</span>。多數致病菌喜歡中性環境，在酸性的皮膚表面很難繁殖，所以這層膜又叫「酸性保護膜」。</li>
+      <li><b>皮脂會變成殺菌的脂肪酸。</b>皮脂裡的油脂被皮膚上的常在菌分解後，會產生游離脂肪酸。其中有幾種（例如人類皮脂特有的一種脂肪酸）能直接殺死金黃色葡萄球菌等細菌。<span class="extra">補充</span></li>
+      <li><b>皮脂腺也會分泌抗菌物質。</b>皮脂腺細胞會製造「抗菌胜肽」，一起分泌到皮膚表面。<span class="extra">補充</span></li>
+      <li><b>油膜本身是屏障。</b>潤滑皮膚、防止乾裂<span class="q">皮 56</span>，皮膚不裂開，細菌就不容易入侵<span class="q">皮 163</span>。</li>
+    </ol>
+    <figure>
+      <div class="scroll">{{A_SURFACE}}</div>
+      <figcaption>同樣是皮脂，在表面是保護，在堵住的毛孔裡卻變成細菌的食物。</figcaption>
+    </figure>
+
+    <h4>那為什麼還會長青春痘</h4>
+    <p>青春痘要四個條件一起發生，抑菌作用只管得到第一步之前的皮膚表面：</p>
+    <ol class="reasons">
+      <li><b>皮脂分泌太多。</b>青春期性荷爾蒙增加<span class="q">皮 91</span>，15–20 歲皮脂分泌最旺盛<span class="q">皮 103</span>；粉刺就是皮脂腺分泌失調造成的<span class="q">皮 53</span>。</li>
+      <li><b>毛孔口被角質堵住。</b>毛孔開口的角質細胞沒有正常剝落，黏成一團「角質栓」，把皮脂關在毛孔裡。這就是 Q1 講的角化過程出了問題。<span class="extra">補充</span></li>
+      <li><b>痤瘡桿菌大量繁殖。</b>堵住的毛孔裡沒有氧氣、皮脂又多，正好是痤瘡桿菌最喜歡的環境。它是皮膚的常在菌，本來就耐酸、以皮脂為食，抑菌作用對它沒什麼效果。<span class="extra">補充</span></li>
+      <li><b>發炎。</b>細菌分解皮脂產生的脂肪酸在表面能殺菌，關在毛孔裡卻會刺激周圍組織；加上免疫細胞趕來作戰，就變成紅腫、化膿。<span class="extra">補充</span></li>
+    </ol>
+    <figure>
+      <div class="scroll">{{A_STAGES}}</div>
+      <figcaption>紫色小點是痤瘡桿菌，黃色是皮脂，褐色條是角質栓。黑頭的黑色是毛孔口的角質和黑色素接觸空氣氧化，不是髒東西。</figcaption>
+    </figure>
+    <div class="box"><b>所以保養的重點是「別讓毛孔堵住」，不是把油洗光：</b>早晚各洗一次臉<span class="q">皮 156</span>，用刺激性小的肥皂<span class="q">護 28</span>，不用高油度化粧品<span class="q">護 32</span>。洗太多次會洗掉弱酸性的皮脂膜，反而削弱保護。化膿的痘痘不要擠，請顧客看皮膚科<span class="q">皮 15</span>；題庫也說皮脂膜的功用「不包括防止長青春痘」<span class="q">皮 163</span>。</div>
+  </section>
+
+  <section class="qa" id="acne-time">
+    <div class="qlabel">Q4</div>
+    <h2>青春痘要多久形成？又要多久才會代謝掉？</h2>
+    <div class="answer"><b>簡答：</b>從毛孔開始堵住到看得見粉刺，大約要 <b>6–12 週</b>；一旦發炎，紅腫 <b>1–3 天</b>就冒出來。一般紅腫痘約 <b>1–2 週</b>消退，但留下的紅印、黑印要<b>幾個月到一年</b>才會淡掉。<span class="extra">補充</span></div>
+    <figure>
+      <div class="scroll">{{A_TIME}}</div>
+      <figcaption>時間軸是對數刻度，越往右每一格代表的時間越長；滑鼠移到條上可以看說明。每個人差異很大，數字是皮膚科常見的概略說法，題庫沒有考。</figcaption>
+    </figure>
+    <h4>形成：比你以為的早很多</h4>
+    <ul>
+      <li>第一步的「微粉刺」肉眼看不見，要大約 6–12 週才長成看得到的粉刺。今天冒出來的痘痘，其實兩三個月前就開始了。</li>
+      <li>所以改變作息或換保養品，通常要持續 <b>2–3 個月</b>才看得出效果，不要一兩週沒變化就放棄。</li>
+      <li>粉刺一旦發炎，紅腫會在 1–3 天內突然冒出來，這是大家感覺「一夜長痘」的原因。</li>
+    </ul>
+    <h4>代謝：痘痘消了，痘印還在</h4>
+    <ul>
+      <li><b>紅腫痘（丘疹、膿皰）</b>：不去擠它，大約 1–2 週會自己消退。</li>
+      <li><b>結節、囊腫</b>：長在比較深的位置，要數週到數月，也最容易留疤，應該看皮膚科。</li>
+      <li><b>紅印</b>：發炎讓微血管擴張，數週到半年慢慢退。</li>
+      <li><b>黑印</b>：發炎刺激黑色素細胞多製造黑色素<span class="q">皮 169</span>。黑色素在表皮的話，會跟著約 28 天一輪的角質代謝<span class="q">皮 17</span>，經過好幾輪慢慢淡掉，約 3 個月到 1 年；跑到真皮的更久。曬太陽會讓黑印更深，所以要防曬。</li>
+      <li><b>凹洞疤痕</b>：真皮的膠原纖維被破壞<span class="q">皮 84</span>，不會自己長回來，要找皮膚科醫師處理。</li>
+    </ul>
+    <div class="box"><b>為什麼不要擠：</b>擠壓會把毛囊壁壓破得更深，細菌和皮脂擠進真皮，發炎更久、更容易留下紅黑印甚至凹疤。</div>
   </section>
 
   <footer>有新的疑問可以繼續加在這一頁。</footer>
