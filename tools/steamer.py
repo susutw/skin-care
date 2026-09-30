@@ -65,3 +65,50 @@ def reaction():
 
 
 out = {'S_STEAMER': steamer(), 'S_REACTION': reaction()}
+
+
+def steam_vs_massage():
+    o = ['<defs><marker id="ar6" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="arrowhead"/></marker></defs>']
+
+    def skin(ox, vessel_cls):
+        s = f'<rect x="{ox}" y="30" width="360" height="60" class="bg-air"/>'
+        s += f'<rect x="{ox}" y="90" width="360" height="160" class="bg-derm"/>'
+        s += f'<rect x="{ox}" y="90" width="360" height="34" class="bg-cell"/>'
+        s += f'<line x1="{ox}" y1="90" x2="{ox+360}" y2="90" class="surface"/>'
+        cx = ox + 90
+        s += f'<path d="M{cx-9} 90 L {cx-6} 210 Q {cx} 218 {cx+6} 210 L {cx+9} 90" class="foll"/>'
+        s += f'<line x1="{cx}" y1="212" x2="{cx}" y2="96" class="hairline"/>'
+        for (dx, dy, r) in ((22, 150, 11), (30, 166, 9)):
+            s += f'<circle cx="{cx+dx}" cy="{dy}" r="{r}" class="sebum"/>'
+        s += f'<path d="M{ox} 228 C {ox+120} 220, {ox+240} 236, {ox+360} 226" class="{vessel_cls}"/>'
+        return s
+
+    # steam panel
+    o.append(skin(0, 'vessel-wide'))
+    for (x, y, r) in ((40, 52, 12), (70, 44, 15), (106, 54, 13), (150, 46, 16), (196, 54, 13)):
+        o.append(f'<circle cx="{x}" cy="{y}" r="{r}" class="steam"/>')
+    o.append('<ellipse cx="90" cy="96" rx="16" ry="6" class="sebum-fill"/>')
+    for x in (250, 290, 330):
+        o.append(f'<path d="M{x} 86 V 52" class="evap" marker-end="url(#ar6)"/>')
+        o.append(f'<path d="M{x} 70 q -5 -8 0 -14 q 5 6 0 14 z" class="drop"/>')
+    o.append('<text x="12" y="20" class="t">蒸臉：熱＋濕氣</text>')
+    o.append('<text x="120" y="112" class="t-s">① 皮脂、角質變軟，好清潔</text>')
+    o.append('<text x="220" y="30" class="t-s">② 蒸完水分跟著蒸發</text>')
+    o.append('<text x="130" y="214" class="t-s">③ 血管擴張、皮膚變紅</text>')
+    # massage panel
+    ox = 400
+    o.append(skin(ox, 'vessel'))
+    o.append(f'<path d="M{ox+170} 70 a 26 12 0 1 1 52 0 a 26 12 0 1 1 -52 0" class="rub" marker-end="url(#ar6)"/>')
+    o.append(f'<path d="M{ox+260} 70 a 26 12 0 1 1 52 0 a 26 12 0 1 1 -52 0" class="rub" marker-end="url(#ar6)"/>')
+    o.append(f'<rect x="{ox+150}" y="84" width="180" height="6" rx="3" class="cream"/>')
+    for x in (ox + 60, ox + 170, ox + 280):
+        o.append(f'<path d="M{x} 230 H {x+34}" class="flow" marker-end="url(#ar6)"/>')
+    o.append(f'<circle cx="{ox+114}" cy="158" r="24" class="stim"/>')
+    o.append(f'<text x="{ox+12}" y="20" class="t">按摩：手技＋按摩霜</text>')
+    o.append(f'<text x="{ox+150}" y="112" class="t-s">① 按摩霜補油、幫助吸收</text>')
+    o.append(f'<text x="{ox+146}" y="162" class="t-s">② 刺激皮脂腺</text>')
+    o.append(f'<text x="{ox+150}" y="214" class="t-s">③ 血液循環變好，送養分</text>')
+    return f'<svg viewBox="0 0 760 250" role="img" aria-label="蒸臉與按摩對皮膚的作用">{"".join(o)}</svg>'
+
+
+out['S_COMPARE'] = steam_vs_massage()
