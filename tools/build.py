@@ -29,6 +29,7 @@ def main():
     cells = runpy.run_path(os.path.join(ROOT, 'tools', 'cells.py'))['out']
     cells.update(runpy.run_path(os.path.join(ROOT, 'tools', 'acne.py'))['out'])
     cells.update(runpy.run_path(os.path.join(ROOT, 'tools', 'steamer.py'))['out'])
+    cells.update(runpy.run_path(os.path.join(ROOT, 'tools', 'exfoliate.py'))['out'])
     notes = open(os.path.join(ROOT, 'src', 'notes.html'), encoding='utf-8').read()
     for k, v in cells.items():
         notes = notes.replace('{{%s}}' % k, v)
