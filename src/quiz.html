@@ -1,0 +1,200 @@
+<title>美容丙級隨機測驗</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+<style>
+/* Layout: one narrow answer-sheet column; a sticky bar keeps progress and the submit button in reach. */
+:root{
+  --bg:#f3f6f6; --paper:#ffffff; --fg:#1b2a2d; --muted:#5a6b6f; --line:#d3dfe0;
+  --accent:#17736f; --accent-soft:#d9eeec; --mark:#b8475d; --mark-soft:#f8e3e7;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111a1c; --paper:#182326; --fg:#e2ebeb; --muted:#9db0b3; --line:#2b3b3e;
+  --accent:#5fc6c0; --accent-soft:#1b3b3a; --mark:#f08ca0; --mark-soft:#3b2229; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#111a1c; --paper:#182326; --fg:#e2ebeb; --muted:#9db0b3; --line:#2b3b3e;
+  --accent:#5fc6c0; --accent-soft:#1b3b3a; --mark:#f08ca0; --mark-soft:#3b2229; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:16px;line-height:1.7;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:760px;margin:0 auto}
+header{padding-block:40px 20px}
+.back{font-size:14px;color:var(--muted);text-decoration:none}
+.back:hover{color:var(--accent)}
+h1{font-family:var(--serif);font-weight:900;font-size:clamp(28px,5vw,38px);line-height:1.25;margin:.3em 0 .2em;text-wrap:balance}
+.sub{color:var(--muted);margin:0}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.prog{font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px;display:flex;align-items:center;gap:10px}
+.track{width:120px;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.track i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+button{font:inherit;font-size:15px;font-weight:700;border-radius:8px;padding:8px 16px;cursor:pointer;border:1.5px solid var(--accent);background:var(--accent);color:var(--paper)}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+button[hidden]{display:none}
+
+.warn{margin:12px 0 0;padding:10px 14px;border-radius:8px;background:var(--mark-soft);color:var(--fg);font-size:15px}
+
+.score{margin:20px 0 4px;padding:20px;border-radius:12px;background:var(--paper);border:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px}
+.score .big{font-family:var(--serif);font-weight:900;font-size:48px;line-height:1;font-variant-numeric:tabular-nums}
+.score .big small{font-size:20px;color:var(--muted);font-weight:600}
+.score .msg{color:var(--muted)}
+.filter{display:flex;align-items:center;gap:8px;font-size:15px;margin-left:auto;cursor:pointer}
+
+ol.qs{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:14px}
+.q{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.q .head{display:flex;gap:12px;align-items:baseline}
+.q .no{font-family:var(--serif);font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;min-width:2ch}
+.q .text{flex:1;min-width:0}
+.q .src{font-size:11.5px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 5px;white-space:nowrap}
+.blank{display:inline-block;min-width:3em;border-bottom:1.5px solid var(--fg);margin:0 4px;vertical-align:-2px}
+.opts{display:grid;gap:6px;margin-top:10px;padding-left:calc(2ch + 12px)}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:8px;border:1px solid var(--line);cursor:pointer;line-height:1.5}
+.opt:hover{border-color:var(--accent)}
+.opt input{margin:3px 0 0;accent-color:var(--accent);flex:none}
+.opt .n{color:var(--muted);flex:none}
+.opt:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:520px){.opts{padding-left:0}}
+
+.done .opt{cursor:default}
+.done .opt:hover{border-color:var(--line)}
+.done .opt.right{border-color:var(--accent);background:var(--accent-soft)}
+.done .opt.wrong{border-color:var(--mark);background:var(--mark-soft)}
+.opt .tag{margin-left:auto;font-size:13px;font-weight:700;white-space:nowrap;padding-left:8px}
+.opt.right .tag{color:var(--accent)}
+.opt.wrong .tag{color:var(--mark)}
+.q.miss{border-color:var(--mark)}
+.q .verdict{font-size:13px;font-weight:700;white-space:nowrap}
+.q.hit .verdict{color:var(--accent)}
+.q.miss .verdict{color:var(--mark)}
+.only-wrong .q.hit{display:none}
+footer{margin-top:28px;font-size:13px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+  <header>
+    <a class="back" href="../">← 回講義</a>
+    <h1>美容丙級隨機測驗</h1>
+    <p class="sub">從 <b id="total"></b> 題不重複題庫中隨機抽 25 題。作答完按「送出」對答案，重新整理或按「換一組」會重抽。</p>
+  </header>
+
+  <div class="bar">
+    <div class="prog"><span id="count">已作答 0 / 25</span><span class="track"><i id="fill"></i></span></div>
+    <div class="btns">
+      <button id="submit" type="button">送出對答案</button>
+      <button id="again" type="button" class="ghost">換一組</button>
+    </div>
+  </div>
+  <p class="warn" id="warn" hidden></p>
+
+  <div class="score" id="score" hidden>
+    <span class="big" id="big"></span>
+    <span class="msg" id="msg"></span>
+    <label class="filter"><input type="checkbox" id="onlyWrong"> 只看錯題</label>
+  </div>
+
+  <ol class="qs" id="list"></ol>
+  <footer>題號標籤：皮＝皮膚認識、護＝護膚、化＝化粧品認識，數字為原題庫題號。</footer>
+</div>
+
+<script>
+const BANK = {{DATA}};
+const N = 25, MARKS = ['①','②','③','④'];
+const $ = id => document.getElementById(id);
+let picked = [], submitted = false, confirmArmed = false;
+
+function rand(n){
+  try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+  catch(e){ return Math.floor(Math.random()*n); }
+}
+function sample(arr, k){
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--){ const j = rand(i+1); [a[i],a[j]] = [a[j],a[i]]; }
+  return a.slice(0, k);
+}
+function esc(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function render(){
+  picked = sample(BANK, N);
+  submitted = false; confirmArmed = false;
+  $('list').className = 'qs';
+  $('score').hidden = true; $('warn').hidden = true;
+  $('onlyWrong').checked = false;
+  $('submit').hidden = false;
+  $('list').innerHTML = picked.map((q, i) => {
+    const text = q.trail || !q.stem
+      ? `${esc(q.stem)}<span class="blank"></span>${esc(q.trail)}`
+      : esc(q.stem);
+    const opts = q.opts.map((o, k) => `
+      <label class="opt" data-k="${k+1}">
+        <input type="radio" name="q${i}" value="${k+1}">
+        <span class="n">${MARKS[k]}</span><span>${esc(o)}</span><span class="tag"></span>
+      </label>`).join('');
+    return `<li class="q" id="q${i}">
+      <div class="head"><span class="no">${i+1}</span><span class="text">${text}</span><span class="src">${esc(q.id.slice(0,1))} ${esc(q.id.slice(1))}</span></div>
+      <div class="opts">${opts}</div></li>`;
+  }).join('');
+  update();
+  window.scrollTo({top:0});
+}
+
+function answered(){ return picked.filter((_, i) => document.querySelector(`input[name="q${i}"]:checked`)).length; }
+function update(){
+  const a = answered();
+  $('count').textContent = `已作答 ${a} / ${N}`;
+  $('fill').style.width = (a / N * 100) + '%';
+  if (confirmArmed && a === N){ confirmArmed = false; $('warn').hidden = true; $('submit').textContent = '送出對答案'; }
+}
+
+function grade(){
+  const left = N - answered();
+  if (left > 0 && !confirmArmed){
+    confirmArmed = true;
+    $('warn').textContent = `還有 ${left} 題沒作答，沒答的會算錯。再按一次「送出」就直接對答案。`;
+    $('warn').hidden = false;
+    $('submit').textContent = '確定送出';
+    const first = picked.findIndex((_, i) => !document.querySelector(`input[name="q${i}"]:checked`));
+    if (first >= 0) $('q'+first).scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  submitted = true;
+  $('warn').hidden = true;
+  $('submit').hidden = true; $('submit').textContent = '送出對答案';
+  let right = 0;
+  picked.forEach((q, i) => {
+    const li = $('q'+i);
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const v = sel ? +sel.value : 0;
+    const ok = v === q.ans;
+    if (ok) right++;
+    li.classList.add(ok ? 'hit' : 'miss');
+    li.querySelectorAll('input').forEach(x => x.disabled = true);
+    li.querySelectorAll('.opt').forEach(o => {
+      const k = +o.dataset.k;
+      if (k === q.ans){ o.classList.add('right'); o.querySelector('.tag').textContent = '正確答案'; }
+      else if (k === v){ o.classList.add('wrong'); o.querySelector('.tag').textContent = '你的答案'; }
+    });
+    const head = li.querySelector('.head');
+    const vd = document.createElement('span');
+    vd.className = 'verdict';
+    vd.textContent = ok ? '答對' : (v ? '答錯' : '未作答');
+    head.appendChild(vd);
+  });
+  $('list').classList.add('done');
+  const score = Math.round(right / N * 100);
+  $('big').innerHTML = `${score}<small> 分</small>`;
+  $('msg').textContent = `答對 ${right} / ${N} 題` + (score >= 60 ? '，及格' : '，還差一點（60 分及格）');
+  $('score').hidden = false;
+  $('score').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+$('total').textContent = BANK.length;
+$('list').addEventListener('change', update);
+$('submit').addEventListener('click', grade);
+$('again').addEventListener('click', render);
+$('onlyWrong').addEventListener('change', e => $('list').classList.toggle('only-wrong', e.target.checked));
+render();
+</script>
