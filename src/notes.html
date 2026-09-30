@@ -132,6 +132,21 @@ svg text{font-family:var(--sans);fill:var(--fg)}
 .answer{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:12px 16px;max-width:66ch;margin:12px 0 18px}
 .answer b{font-family:var(--serif)}
 h4{font-size:17px;margin:26px 0 6px;font-family:var(--serif);font-weight:600}
+.brk-calm{fill:none;stroke:var(--muted);stroke-width:1.5}
+.brk-hot{fill:none;stroke:var(--mark);stroke-width:1.5}
+.c-plastic{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+.c-seal,.c-cap{fill:var(--muted)}
+.c-pump{fill:none;stroke:var(--muted);stroke-width:5;stroke-linecap:round}
+.c-glass{fill:var(--air);stroke:var(--muted);stroke-width:1.5}
+.c-liquid{fill:var(--film);opacity:.8}
+.c-snap{stroke:var(--mark);stroke-width:2;stroke-dasharray:4 3}
+.c-shard{fill:var(--air);stroke:var(--mark);stroke-width:1.2}
+.ok{font-size:13px;font-weight:700;fill:var(--accent)} .ng{font-size:13px;font-weight:700;fill:var(--mark)}
+.tbl{overflow-x:auto;margin:14px 0 18px}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{font-size:13px;color:var(--muted);border-bottom:1.5px solid var(--fg)}
+td:first-child{font-weight:700;white-space:nowrap}
 a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 </style>
 
@@ -145,6 +160,8 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius
       <li><a href="#lucidum">Q2 透明層為什麼只有手掌腳底有？</a></li>
       <li><a href="#sebum">Q3 皮脂能抑菌，為什麼還會長痘？</a></li>
       <li><a href="#acne-time">Q4 青春痘多久形成、多久消？</a></li>
+      <li><a href="#comedo">Q5 粉刺和痘痘有什麼差別？</a></li>
+      <li><a href="#ampoule">Q6 玻璃安瓿為什麼不適合裝化粧品？</a></li>
     </ul>
   </header>
 
@@ -309,6 +326,49 @@ a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius
       <li><b>凹洞疤痕</b>：真皮的膠原纖維被破壞<span class="q">皮 84</span>，不會自己長回來，要找皮膚科醫師處理。</li>
     </ul>
     <div class="box"><b>為什麼不要擠：</b>擠壓會把毛囊壁壓破得更深，細菌和皮脂擠進真皮，發炎更久、更容易留下紅黑印甚至凹疤。</div>
+  </section>
+
+  <section class="qa" id="comedo">
+    <div class="qlabel">Q5</div>
+    <h2>粉刺和痘痘有什麼差別？</h2>
+    <div class="answer"><b>簡答：</b>差在<b>有沒有發炎</b>。粉刺是毛孔被角質和皮脂塞住，還沒發炎，不紅不痛；痘痘是粉刺裡的細菌繁殖、毛囊發炎後的樣子，會紅、腫、痛。粉刺是痘痘的前一個階段（見 Q3 的五階段圖）。</div>
+    <figure>
+      <div class="scroll">{{A_TYPES}}</div>
+      <figcaption>左邊兩種是粉刺，右邊三種是發炎的痘痘，越往右發炎的位置越深。</figcaption>
+    </figure>
+    <div class="tbl"><table>
+      <thead><tr><th></th><th>粉刺</th><th>痘痘</th></tr></thead>
+      <tbody>
+        <tr><td>本質</td><td>毛孔被角質＋皮脂堵住</td><td>堵住的毛孔裡細菌繁殖、毛囊發炎</td></tr>
+        <tr><td>種類</td><td>白頭（毛孔口封住）、黑頭（毛孔口打開）</td><td>丘疹 → 膿皰 → 結節・囊腫（由淺到深）</td></tr>
+        <tr><td>外觀</td><td>膚色或黑色小點，不紅</td><td>紅腫，膿皰頂端有白黃色膿</td></tr>
+        <tr><td>痛不痛</td><td>不痛</td><td>會痛，越深越痛</td></tr>
+        <tr><td>會不會留疤</td><td>通常不會</td><td>可能留紅印、黑印，結節囊腫容易留凹疤</td></tr>
+        <tr><td>美容師怎麼處理</td><td>清潔為主，保持毛孔通暢</td><td>著重清潔、消炎<span class="q">護 14</span>；化膿的請顧客看皮膚科<span class="q">皮 15</span>；嚴重的不做按摩<span class="q">護 17</span></td></tr>
+      </tbody>
+    </table></div>
+    <ul>
+      <li>題庫裡的「<b>面皰</b>」「<b>青春痘</b>」「<b>痤瘡</b>」指的是同一件事，都是整個疾病的名稱，粉刺和發炎的痘痘都算在內。<span class="extra">補充</span></li>
+      <li>黑頭的黑色是毛孔口的角質、皮脂和黑色素接觸空氣<b>氧化</b>變黑，不是髒東西，所以用力搓洗洗不掉。<span class="extra">補充</span></li>
+      <li>白頭的毛孔口被封住，裡面缺氧，比黑頭更容易變成發炎的痘痘。<span class="extra">補充</span></li>
+    </ul>
+  </section>
+
+  <section class="qa" id="ampoule">
+    <div class="qlabel">Q6</div>
+    <h2>玻璃安瓿為什麼不適合裝化粧品？</h2>
+    <p>題庫：「下列何種容器不適用於化粧品？ ①軟管 ②塑膠瓶 ③玻璃安瓿 ④小瓶」，答案是 ③<span class="q">化 26</span>。</p>
+    <figure>
+      <div class="scroll">{{CONTAINERS}}</div>
+      <figcaption>玻璃安瓿整支密封，瓶頸有一圈刻痕（紅色虛線），要折斷才打得開。</figcaption>
+    </figure>
+    <ol class="reasons">
+      <li><b>折斷時容易割傷。</b>安瓿要用手折斷玻璃瓶頸才能打開，斷口很銳利。化粧品是一般消費者在家自己使用，沒有醫護人員的訓練和工具，容易割到手。</li>
+      <li><b>玻璃碎屑可能掉進內容物。</b>折斷時的細小碎玻璃可能掉進液體裡，再被塗到臉上、眼睛周圍，比割到手更危險。</li>
+      <li><b>打開後不能再蓋回去。</b>安瓿是設計給「一次用完」的。沒用完的放著，就會接觸空氣和細菌，容易氧化、變質、被汙染。軟管、塑膠瓶和小瓶都能蓋回去重複使用。</li>
+      <li><b>容易被當成藥品。</b>玻璃安瓿是藥品注射劑的典型包裝。化粧品不能宣稱醫療效果<span class="q">化 8</span>，用藥品的包裝容易讓人誤會它是藥品。<span class="extra">補充</span></li>
+    </ol>
+    <div class="box"><b>跟「取用衛生」一起記：</b>這些容器題的共同原則是<b>安全、不汙染內容物</b>。廣口瓶要用挖杓取用，不要用手指挖<span class="q">化 12</span>，也是同樣的道理。市面上標榜「安瓶精華」的產品，名稱多半只是行銷說法，很多其實是塑膠製的單次用量小瓶。<span class="extra">補充</span></div>
   </section>
 
   <footer>有新的疑問可以繼續加在這一頁。</footer>

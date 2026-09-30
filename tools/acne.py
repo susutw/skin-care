@@ -178,3 +178,92 @@ def timeline():
 
 
 out = {'A_STAGES': stages(), 'A_SURFACE': surface_vs_pore(), 'A_TIME': timeline()}
+
+
+# ---------------------------------------------------------------- comedones vs inflamed lesions
+def lesion(ox, kind):
+    o = []
+    cx, S, W = ox + 85, 80, 170
+    bump = {'white': 7, 'black': 0, 'papule': 12, 'pustule': 16, 'nodule': 20}[kind]
+    o.append(f'<rect x="{ox}" y="44" width="{W}" height="{S-44}" class="bg-air"/>')
+    o.append(f'<rect x="{ox}" y="{S}" width="{W}" height="{250-S}" class="bg-derm"/>')
+    half = 60 if kind == 'nodule' else 34
+    top = f'M{ox} {S} H{cx-half} Q {cx} {S-bump*2} {cx+half} {S} H{ox+W}'
+    o.append(f'<path d="{top} V{S+30} H{ox} Z" class="bg-cell"/>')
+    if kind == 'papule':
+        o.append(f'<ellipse cx="{cx}" cy="{S+26}" rx="36" ry="36" class="inflame"/>')
+    elif kind == 'pustule':
+        o.append(f'<ellipse cx="{cx}" cy="{S+26}" rx="38" ry="38" class="inflame"/>')
+    elif kind == 'nodule':
+        o.append(f'<ellipse cx="{cx}" cy="{S+90}" rx="66" ry="64" class="inflame"/>')
+        o.append(f'<ellipse cx="{cx}" cy="{S+92}" rx="36" ry="38" class="pus"/>')
+        o.append(bugs(scatter(10, cx, S + 92, 24, 26)))
+    o.append(f'<path d="{top}" class="surface"/>')
+    if kind in ('white', 'black', 'papule', 'pustule'):
+        o.append(f'<path d="M{cx-8} {S} C {cx-10} {S+10}, {cx-22} {S+14}, {cx-22} {S+34} C {cx-22} {S+52}, {cx-8} {S+58}, {cx-6} {S+100} H {cx+6} C {cx+8} {S+58}, {cx+22} {S+52}, {cx+22} {S+34} C {cx+22} {S+14}, {cx+10} {S+10}, {cx+8} {S}" class="foll"/>')
+        o.append(f'<ellipse cx="{cx}" cy="{S+34}" rx="18" ry="24" class="sebum-fill"/>')
+        o.append(bugs(scatter(5 if kind in ('white', 'black') else 9, cx, S + 38, 12, 16)))
+    if kind == 'white':
+        o.append(f'<path d="M{cx-9} {S-3} Q {cx} {S-12} {cx+9} {S-3}" class="closed"/>')
+        o.append(f'<circle cx="{cx}" cy="{S-6}" r="5" class="pus"/>')
+    if kind == 'black':
+        o.append(f'<ellipse cx="{cx}" cy="{S+2}" rx="9" ry="5" class="blackhead"/>')
+    if kind == 'pustule':
+        o.append(f'<ellipse cx="{cx}" cy="{S-10}" rx="12" ry="9" class="pus"/>')
+    if kind == 'nodule':
+        o.append(f'<line x1="{ox+W-14}" y1="{S}" x2="{ox+W-14}" y2="{S+156}" class="lead"/>')
+        o.append(f'<text x="{ox+W-18}" y="{S+150}" text-anchor="end" class="t-s">深</text>')
+    return ''.join(o)
+
+
+def lesion_types():
+    items = [('white', '白頭粉刺', '膚色小凸起、不痛'), ('black', '黑頭粉刺', '毛孔口有黑點、不痛'),
+             ('papule', '丘疹', '紅、硬、壓了會痛'), ('pustule', '膿皰', '紅腫＋頂端白黃色膿'),
+             ('nodule', '結節・囊腫', '又大又深、很痛、易留疤')]
+    o = []
+    for i, (k, t, s) in enumerate(items):
+        ox = i * 182
+        o.append(f'<clipPath id="lt{i}"><rect x="{ox}" y="44" width="170" height="206" rx="10"/></clipPath>')
+        o.append(f'<g clip-path="url(#lt{i})">{lesion(ox, k)}</g>')
+        o.append(f'<rect x="{ox+0.5}" y="44.5" width="169" height="205" rx="10" class="frame"/>')
+        o.append(f'<text x="{ox+8}" y="274" class="t">{t}</text>')
+        o.append(f'<text x="{ox+8}" y="294" class="t-s">{s}</text>')
+    o.append('<path d="M2 32 V 24 H 350 V 32" class="brk-calm"/><text x="176" y="16" text-anchor="middle" class="t">粉刺：沒有發炎</text>')
+    o.append('<path d="M366 32 V 24 H 896 V 32" class="brk-hot"/><text x="631" y="16" text-anchor="middle" class="t">痘痘：已經發炎</text>')
+    return f'<svg viewBox="0 0 898 302" role="img" aria-label="粉刺與發炎痘痘的五種型態">{"".join(o)}</svg>'
+
+
+# ---------------------------------------------------------------- containers
+def containers():
+    o = []
+    # tube
+    o.append('<path d="M40 40 H 120 L 112 180 H 48 Z" class="c-plastic"/>')
+    o.append('<rect x="36" y="32" width="88" height="10" rx="3" class="c-seal"/>')
+    o.append('<rect x="66" y="180" width="28" height="30" rx="4" class="c-cap"/>')
+    # plastic pump bottle
+    o.append('<rect x="220" y="80" width="84" height="130" rx="16" class="c-plastic"/>')
+    o.append('<rect x="244" y="60" width="36" height="22" rx="4" class="c-cap"/>')
+    o.append('<path d="M262 60 V 42 H 292" class="c-pump"/>')
+    # vial
+    o.append('<rect x="410" y="100" width="56" height="110" rx="10" class="c-glass"/>')
+    o.append('<rect x="416" y="84" width="44" height="18" rx="3" class="c-cap"/>')
+    o.append('<rect x="416" y="150" width="44" height="54" rx="6" class="c-liquid"/>')
+    # ampoule
+    o.append('<path d="M596 210 H 644 Q 652 210 652 200 V 128 Q 652 112 632 104 V 88 Q 640 80 632 70 V 50 Q 632 40 620 40 Q 608 40 608 50 V 70 Q 600 80 608 88 V 104 Q 588 112 588 128 V 200 Q 588 210 596 210 Z" class="c-glass"/>')
+    o.append('<rect x="592" y="150" width="56" height="56" rx="6" class="c-liquid"/>')
+    o.append('<line x1="600" y1="78" x2="640" y2="78" class="c-snap"/>')
+    for (x, y, a) in ((670, 70, 20), (684, 92, -30), (662, 100, 60)):
+        o.append(f'<path d="M{x} {y} l 8 -4 l -2 9 z" class="c-shard" transform="rotate({a} {x} {y})"/>')
+    o.append('<text x="660" y="62" class="t-s">折斷處</text>')
+    labels = [(80, '軟管', '擠出使用、手不碰到內容物', True), (262, '塑膠瓶', '按壓或倒出、可重複開關', True),
+              (438, '小瓶', '有蓋子、可重複開關', True), (620, '玻璃安瓿', '全密封，要折斷瓶頸才打得開', False)]
+    for x, t, s, ok in labels:
+        cls = 'ok' if ok else 'ng'
+        mark = '✓ 適用' if ok else '✗ 不適用'
+        o.append(f'<text x="{x}" y="240" text-anchor="middle" class="t">{t}</text>')
+        o.append(f'<text x="{x}" y="258" text-anchor="middle" class="{cls}">{mark}</text>')
+        o.append(f'<text x="{x}" y="276" text-anchor="middle" class="t-s">{s}</text>')
+    return f'<svg viewBox="0 0 740 286" role="img" aria-label="化粧品容器比較">{"".join(o)}</svg>'
+
+
+out.update({'A_TYPES': lesion_types(), 'CONTAINERS': containers()})
