@@ -64,3 +64,30 @@ def exfoliation():
 
 
 out = {'X_EXFOLIATE': exfoliation()}
+
+
+def peel_depth():
+    o = []
+    X0, X1 = 90, 330
+    layers = [(40, 52, 'l-corn', '角質層'), (52, 112, 'l-spin', '表皮其他層'),
+              (112, 150, 'l-derm-top', '真皮乳頭層'), (150, 240, 'l-derm', '真皮網狀層')]
+    for y1, y2, cls, name in layers:
+        o.append(f'<rect x="{X0}" y="{y1}" width="{X1-X0}" height="{y2-y1}" class="{cls}"/>')
+        o.append(f'<text x="{X0-8}" y="{(y1+y2)/2+4}" text-anchor="end" class="t-s">{name}</text>')
+    o.append(f'<line x1="{X0}" y1="112" x2="{X1}" y2="112" class="membrane-thin"/>')
+    o.append(f'<text x="{X1-6}" y="108" text-anchor="end" class="t-s">基底層</text>')
+    cols = [('去角質', 50, '磨砂膏・低濃度果酸', 'mild'), ('淺層換膚', 110, '較高濃度果酸', 'peel'),
+            ('中層換膚', 146, '較強的酸', 'peel'), ('深層換膚', 206, '強酸・雷射', 'peel')]
+    for i, (name, depth, how, kind) in enumerate(cols):
+        x = 380 + i * 96
+        o.append(f'<line x1="{X0}" y1="{depth}" x2="{x}" y2="{depth}" class="depthline"/>')
+        o.append(f'<rect x="{x-5}" y="40" width="10" height="{depth-40}" rx="4" class="{"bar-mild" if kind=="mild" else "bar-peel"}"/>')
+        o.append(f'<text x="{x}" y="28" text-anchor="middle" class="t">{name}</text>')
+        o.append(f'<text x="{x}" y="{depth+18}" text-anchor="middle" class="t-s">{how}</text>')
+    o.append('<path d="M350 252 V 258 H 410 V 252" class="divider"/><text x="380" y="276" text-anchor="middle" class="t">美容師範圍</text>')
+    o.append('<path d="M446 252 V 258 H 698 V 252" class="divider"/><text x="572" y="276" text-anchor="middle" class="t">醫療行為，由醫師執行</text>')
+    o.append(f'<line x1="{X0}" y1="150" x2="{X1}" y2="150" class="divider"/>')
+    return f'<svg viewBox="0 0 760 286" role="img" aria-label="去角質與各種換膚的作用深度">{"".join(o)}</svg>'
+
+
+out['X_PEEL'] = peel_depth()
