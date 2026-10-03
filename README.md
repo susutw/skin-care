@@ -16,7 +16,6 @@ src/handout.html      講義模板，{{SKIN}} 等佔位會換成 tools/svgs.py �
 src/quiz.html         測驗模板，{{DATA}} 會換成題庫
 src/notes.html        我的疑問頁，細胞圖由 tools/cells.py 產生
 tools/build.py        產生 index.html 與 quiz/index.html
-tools/deploy.sh       把產出複製到 susutw.github.io/skin-care/
 ```
 
 題號 `id` 前綴：`皮`＝工作項目 01 皮膚認識、`護`＝工作項目 02 護膚、`化`＝共同科目 90012 化粧品認識。
@@ -24,6 +23,7 @@ tools/deploy.sh       把產出複製到 susutw.github.io/skin-care/
 ## 使用
 
 ```bash
-python3 tools/build.py
-tools/deploy.sh   # 預設部署到 ../susutw.github.io，可用第一個參數指定路徑
+python3 tools/build.py   # 本機產生頁面
 ```
+
+推到 `main` 後，`.github/workflows/pages.yml` 會自動 build 並部署到 GitHub Pages（本 repo 的 Pages，經由 `susutw.github.io` 的自訂網域 `sudosu.tw` 顯示在 `/skin-care/`）。
