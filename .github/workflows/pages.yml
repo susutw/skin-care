@@ -33,6 +33,7 @@ jobs:
           cp index.html _site/index.html
           cp quiz/index.html _site/quiz/index.html
           cp notes/index.html _site/notes/index.html
+          cp -R game _site/game
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
       - id: deployment
