@@ -47,6 +47,7 @@ export function titleScreen(best) {
       <div class="logo"><span class="logo-main">粉刺沙龍</span><span class="logo-sub">POP SALON 3D</span></div>
       <p class="tagline">你是美容師！照著美容丙級學科的原則替顧客清粉刺，提示上的標籤是題庫題號。</p>
       <div class="level-grid">${cards}</div>
+      <a class="closeup-link" href="closeup/">🔍 近距離療癒模式<small>放大鏡下一次擠一顆，看清楚每種痘痘擠出來的樣子</small></a>
       <p class="howto">🖱️ 拖曳旋轉・滾輪 / 雙指縮放・<b>按住</b>粉刺使用工具</p>
       <p class="disclaimer">遊戲規則依美容丙級學科題庫整理，僅供練習與娛樂，不能取代醫療建議。化膿、嚴重的痘痘請諮詢皮膚科醫師。</p>
     </div>`;

@@ -416,6 +416,21 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .level-job { font-size: 12px; color: var(--muted); }
 .level-stars { font-size: 13px; color: var(--star); letter-spacing: 1px; }
 .howto { font-size: 13px; color: var(--muted); }
+.closeup-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  border: 1px dashed var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+}
+.closeup-link small { font-weight: 400; color: var(--muted); }
+.closeup-link:hover, .closeup-link:focus-visible { border-style: solid; }
 .disclaimer { font-size: 12px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 8px; }
 
 /* 顧客卡 */

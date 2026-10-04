@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>粉刺沙龍・近距離</title>
+  <meta name="description" content="放大鏡下一次只處理一顆：黑頭、白頭、膿皰、紅腫丘疹的近距離擠粉刺療癒模式。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="stylesheet" href="closeup.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body class="closeup">
+  <canvas id="cu-scene" aria-label="放大的皮膚與痘痘"></canvas>
+  <div class="cu-lens" aria-hidden="true"></div>
+
+  <header class="cu-top">
+    <nav class="crumbs"><a href="../">← 粉刺沙龍</a><a href="../../">講義</a><a href="../../quiz/">測驗</a></nav>
+    <h1>近距離療癒</h1>
+    <div class="cu-right">
+      <span class="cu-count">已清出 <b id="cu-count">0</b> 顆</span>
+      <button id="btn-mute" class="icon-btn" aria-label="切換音效">🔊</button>
+    </div>
+  </header>
+
+  <nav id="cu-tabs" class="cu-tabs" role="tablist" aria-label="痘痘種類"></nav>
+
+  <details id="cu-info" class="cu-info" open>
+    <summary id="cu-info-title"></summary>
+    <div id="cu-info-body"></div>
+  </details>
+
+  <div class="cu-hud">
+    <div class="cu-meter"><i id="cu-bar"></i></div>
+    <p id="cu-stage" class="cu-stage" aria-live="polite"></p>
+    <p class="cu-hint">左鍵 / 單指按住加壓・右鍵 / 雙指旋轉縮放</p>
+  </div>
+  <nav id="toolbar"></nav>
+  <div id="toast" class="toast" hidden></div>
+
+  <noscript>這個頁面需要開啟 JavaScript。</noscript>
+  <script type="module" src="../src/closeup/main.js"></script>
+</body>
+</html>

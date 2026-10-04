@@ -59,6 +59,8 @@ export const sfx = {
     noise({ dur: 0.16, vol: 0.4, freq: 1300, q: 1.4 });
     tone({ f0: 380, f1: 95, dur: 0.11, vol: 0.32 });
   },
+  // 化妝棉擦過去
+  swish() { noise({ dur: 0.9, vol: 0.22, freq: 1800, q: 0.6, filter: 'bandpass' }); },
   ouch() {
     tone({ type: 'square', f0: 420, f1: 180, dur: 0.22, vol: 0.12 });
     tone({ type: 'square', f0: 300, f1: 140, dur: 0.25, vol: 0.1, delay: 0.09 });
