@@ -71,6 +71,16 @@ export class FX {
     this.parts.push({ m, vel, age: 0, life: 3.2, size: 0.18 + Math.random() * 0.16, g: -0.02, spin: 0, stretch: 1, grow: true });
   }
 
+  // 任意位置的一團柔和霧氣（近距離模式的蒸臉用）
+  puff(pos, vel, size, life) {
+    const m = new THREE.Sprite(this.puffMat || (this.puffMat = new THREE.SpriteMaterial({
+      map: mistTex, transparent: true, opacity: 0.5, depthWrite: false,
+    })));
+    m.position.copy(pos);
+    this.scene.add(m);
+    this.parts.push({ m, vel, age: 0, life, size, g: -0.02, spin: 0, stretch: 1, grow: true });
+  }
+
   sparkle(pos, normal, color, n) {
     this.burst(pos, normal, { n, speed: 0.5, spread: 1, size: 0.014, life: 0.8, color, basic: true, geo: octa, gravity: 0.3, spin: 6 });
   }
