@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>粉刺沙龍 3D</title>
+  <meta name="description" content="3D 美容師清粉刺小遊戲：依照不同肌膚狀況選對工具，邊玩邊學皮膚科普知識。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="scene" aria-label="3D 顧客臉部"></canvas>
+
+  <header id="hud" hidden>
+    <div class="hud-customer">
+      <span id="hud-emoji" class="hud-avatar"></span>
+      <div><b id="hud-name"></b><small id="hud-title"></small></div>
+    </div>
+    <div class="hud-stats">
+      <div class="stat"><small>剩下</small><b id="hud-left">0</b></div>
+      <div class="stat"><small>分數</small><b id="hud-score">0</b></div>
+      <div class="stat"><small>時間</small><b id="hud-time">0:00</b></div>
+    </div>
+    <div class="hud-actions">
+      <button id="btn-mute" class="icon-btn" aria-label="切換音效">🔊</button>
+      <button id="btn-menu" class="icon-btn" aria-label="回到選單">☰</button>
+    </div>
+  </header>
+
+  <div id="bubble" class="bubble" hidden></div>
+  <nav id="toolbar" hidden></nav>
+  <div id="toast" class="toast" hidden></div>
+  <div id="steam-meter" class="steam-meter" hidden>
+    <p class="sm-title">♨️ 蒸臉中・<b id="sm-skin"></b>要蒸多久？</p>
+    <div class="sm-bar"><i id="sm-fill"></i></div>
+    <p class="sm-hint">放開就停止蒸臉</p>
+  </div>
+  <div id="hover-label" class="hover-label" hidden></div>
+  <div id="cursor" class="cursor" hidden>
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <circle class="ring-bg" cx="30" cy="30" r="26" />
+      <circle id="ring" class="ring" cx="30" cy="30" r="26" />
+    </svg>
+    <span id="cursor-icon"></span>
+  </div>
+  <div id="overlay" class="overlay"></div>
+
+  <noscript>這個遊戲需要開啟 JavaScript。</noscript>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
