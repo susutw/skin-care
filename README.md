@@ -9,15 +9,19 @@
 | 我的疑問 | `/skin-care/notes/` | 讀題庫時的疑問與解答，附各層細胞放大圖 |
 | 清粉刺小遊戲 | `/skin-care/game/` | 3D 美容師遊戲：依膚質蒸臉、清粉刺、轉介化膿痤瘡，提示附題號 |
 | 近距離療癒 | `/skin-care/game/closeup/` | 放大鏡下一次擠一顆：黑頭、白頭、膿皰（示範）、紅腫丘疹（凝膠） |
+| 課程表 | `/skin-care/schedule/` | 皮膚管理服務人才培訓班 115/10/07–11/24 課表：今天／下一堂、依老師篩選、各課目時數 |
 
 ## 結構
 
 ```
 data/questions.json   不重複題庫（236 題，原 262 題刪去 26 題重複／同考點題目）
+data/schedule.json    培訓班課表（36 天、240 節），連續同課目的節次合併成一段 from–to
 src/handout.html      講義模板，{{SKIN}} 等佔位會換成 tools/svgs.py 產生的圖
 src/quiz.html         測驗模板，{{DATA}} 會換成題庫
 src/notes.html        我的疑問頁，細胞圖由 tools/cells.py 產生
-tools/build.py        產生 index.html 與 quiz/index.html
+src/schedule.html     課程表模板，{{DATA}} 會換成 data/schedule.json
+schedule/scans/       課表原始掃描檔（10 月、11 月各一張）
+tools/build.py        產生 index.html、quiz/、notes/、schedule/ 的 index.html
 game/                 清粉刺小遊戲（Three.js + ES modules，不需 build，部署時整個資料夾複製過去）
   src/data.js         顧客、膚質、工具與科普文字；refs 對應 questions.json 的題號
   closeup/            近距離療癒模式頁面
