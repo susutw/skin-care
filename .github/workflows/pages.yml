@@ -29,10 +29,12 @@ jobs:
         run: python3 tools/build.py
       - name: Collect site
         run: |
-          mkdir -p _site/quiz _site/notes
+          mkdir -p _site/quiz _site/notes _site/schedule
           cp index.html _site/index.html
           cp quiz/index.html _site/quiz/index.html
           cp notes/index.html _site/notes/index.html
+          cp schedule/index.html _site/schedule/index.html
+          cp -R schedule/scans _site/schedule/scans
           cp -R game _site/game
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

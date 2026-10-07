@@ -1,4 +1,4 @@
-"""Build the static pages: index.html (講義), quiz/ (隨機測驗), notes/ (我的疑問)."""
+"""Build the static pages: index.html (講義), quiz/ (隨機測驗), notes/ (我的疑問), schedule/ (課程表)."""
 import json, os, runpy
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -37,7 +37,14 @@ def main():
     os.makedirs(os.path.join(ROOT, 'notes'), exist_ok=True)
     with open(os.path.join(ROOT, 'notes', 'index.html'), 'w', encoding='utf-8') as f:
         f.write(page(notes))
-    print(f'built index.html, quiz/ ({len(bank)} questions), notes/')
+
+    sched = json.load(open(os.path.join(ROOT, 'data', 'schedule.json'), encoding='utf-8'))
+    page_s = open(os.path.join(ROOT, 'src', 'schedule.html'), encoding='utf-8').read()
+    page_s = page_s.replace('{{DATA}}', json.dumps(sched, ensure_ascii=False, separators=(',', ':')))
+    os.makedirs(os.path.join(ROOT, 'schedule'), exist_ok=True)
+    with open(os.path.join(ROOT, 'schedule', 'index.html'), 'w', encoding='utf-8') as f:
+        f.write(page(page_s))
+    print(f'built index.html, quiz/ ({len(bank)} questions), notes/, schedule/ ({len(sched["days"])} days)')
 
 if __name__ == '__main__':
     main()
