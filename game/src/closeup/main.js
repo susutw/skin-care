@@ -17,6 +17,7 @@ const TONES = ['#f3cfb3', '#eec4a4', '#e2b08c', '#c99572', '#a8714f'];
 const TOOLS = {
   loop: { icon: '➰', name: '粉刺棒' },
   steam: { icon: '♨️', name: '蒸臉' },
+  needle: { icon: '🪡', name: '挑針' },
   gel: { icon: '🧴', name: '消炎凝膠' },
   wipe: { icon: '🧽', name: '化妝棉' },
   next: { icon: '↻', name: '下一顆' },
@@ -24,14 +25,25 @@ const TOOLS = {
 const KIT = {
   blackhead: ['loop', 'wipe', 'next'],
   whitehead: ['steam', 'loop', 'wipe', 'next'],
+  closed: ['steam', 'needle', 'loop', 'wipe', 'next'],
   pustule: ['loop', 'wipe', 'next'],
   papule: ['gel', 'loop', 'next'],
 };
 const HOW = {
   blackhead: '按住畫面（或空白鍵）用粉刺棒慢慢加壓，力道夠了，皮脂栓就會被推出來。',
   whitehead: '先按住「蒸臉」軟化角質，再用粉刺棒加壓。表皮破開後，白色內容物會被擠出來。',
+  closed: '先按住「蒸臉」軟化角質，再用「挑針」在頂端按一下，淺淺挑開一個小口（按太久會刺太深流血），最後用粉刺棒加壓。',
   pustule: '這頁是示範，讓你看清楚擠膿皰會發生什麼。現實中化膿性痤瘡要請顧客看皮膚科。',
   papule: '紅腫丘疹裡面沒有東西。可以試著擠擠看，再改用消炎凝膠讓紅腫退下去。',
+};
+// 閉鎖性粉刺只在近距離模式出現，說明放這裡，不動主遊戲的 TYPE_INFO
+const INFO = {
+  ...TYPE_INFO,
+  closed: {
+    name: '閉鎖性粉刺', alt: '閉口・膚色小凸起', icon: '🟤',
+    fact: '閉鎖性粉刺是一顆膚色的小凸起，開口被角質整個封住，看不到白點也看不到黑點，摸起來粗粗的。內容物出不來，所以要先蒸臉軟化，再用消毒過的挑針斜斜挑開最表面，粉刺棒才壓得出來；沒開口就硬壓，只會把皮膚壓紅，甚至把內容物推進真皮層發炎。',
+    refs: ['皮53', '補充'],
+  },
 };
 
 const $ = (s) => document.querySelector(s);
@@ -128,6 +140,22 @@ nozzle.add(bottle, tip);
 nozzle.visible = false;
 patch.group.add(nozzle);
 
+// 挑針：原點在針尖，斜斜靠著皮膚
+const needleRig = new THREE.Group();
+const needleArm = new THREE.Group();
+needleArm.rotation.z = 0.75;
+const needleTip = new THREE.Mesh(new THREE.ConeGeometry(0.006, 0.06, 10), steel);
+needleTip.position.y = 0.03;
+const needleShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 0.22, 10), steel);
+needleShaft.position.y = 0.17;
+const needleHandle = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.34, 16), new THREE.MeshStandardMaterial({ color: '#8fd3c4', roughness: 0.4 }));
+needleHandle.position.y = 0.45;
+needleArm.add(needleTip, needleShaft, needleHandle);
+needleRig.add(needleArm);
+needleRig.traverse((o) => { o.castShadow = true; });
+needleRig.visible = false;
+patch.group.add(needleRig);
+
 const pad = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.045, 40),
   new THREE.MeshPhysicalMaterial({ color: '#fbfaf6', roughness: 1, sheen: 1, sheenColor: new THREE.Color('#ffffff') }));
 pad.castShadow = true;
@@ -151,6 +179,7 @@ function newLesion() {
   pad.visible = false;
   steamT = 0;
   lesion = makeLesion(type, { patch, fx, sfx, rand, tone, toast });
+  lesion.onOpened = () => highlight('loop');
   lesion.onDone = () => {
     save.count++;
     store();
@@ -170,6 +199,7 @@ function setType(t) {
   renderInfo();
   renderTabs();
   newLesion();
+  layoutView();
 }
 
 // ---------- 輸入 ----------
@@ -211,7 +241,7 @@ function updateSteam(dt) {
     const p = new THREE.Vector3(-0.8 + rand() * 0.7, 0.04, rand() * 0.9 - 0.45);
     fx.puff(patch.group.localToWorld(p), new THREE.Vector3(0.22 + rand() * 0.15, 0.18 + rand() * 0.12, -0.06), 0.2 + rand() * 0.16, 2.4);
   }
-  if (lesion.kind !== 'whitehead' || lesion.steamed) return;
+  if (!lesion.steam || lesion.steamed) return;
   steamT += dt;
   holdSnd?.set(Math.min(1, steamT / 1.6));
   if (steamT >= 1.6) {
@@ -228,9 +258,10 @@ function updateSteam(dt) {
       lesion.group.add(d);
       lesion.residues.push(d);
     }
-    toast('角質軟化了！換粉刺棒慢慢加壓吧', ['護37', '護51']);
+    const next = KIT[type].includes('needle') ? 'needle' : 'loop';
+    toast(next === 'needle' ? '角質軟化了！換挑針在頂端挑個小開口' : '角質軟化了！換粉刺棒慢慢加壓吧', ['護37', '護51']);
     setHolding(false);
-    tool = 'loop';
+    tool = next;
     renderTools();
   }
 }
@@ -239,7 +270,7 @@ function updateSteam(dt) {
 
 function startWipe() {
   if (!lesion.done || wipe || !lesion.residues.length) {
-    if (!lesion.done) toast(lesion.kind === 'whitehead' && !lesion.steamed ? '還沒清呢，先蒸臉再擠～' : '還沒擠完呢，先用粉刺棒加壓～');
+    if (!lesion.done) toast(lesion.wipeHint());
     return;
   }
   setHolding(false);
@@ -287,7 +318,7 @@ function frame(now) {
   // rAF 的時間戳可能比載入時的 performance.now() 還早，第一幀會算出負的 dt
   const dt = Math.max(0, Math.min(DT_MAX, (now - last) / 1000));
   last = now;
-  const inp = { loop: holding && tool === 'loop', gel: holding && tool === 'gel' };
+  const inp = { loop: holding && tool === 'loop', gel: holding && tool === 'gel', needle: holding && tool === 'needle' && !wipe };
   updateSteam(dt);
   lesion.update(dt, inp);
   if (inp.loop) holdSnd?.set(lesion.press);
@@ -307,6 +338,11 @@ function frame(now) {
   const ease = Math.min(1, dt * 10);
   loopRig.position.x += (tx - loopRig.position.x) * ease;
   loopRig.position.y += (ty - loopRig.position.y) * ease;
+  // 挑針：按住時針尖點在凸起頂端，放開時抬到旁邊
+  needleRig.visible = tool === 'needle';
+  const nx = inp.needle ? 0.004 : -0.25, ny = inp.needle ? patch.heightAt(0, 0) - 0.004 : 0.12;
+  needleRig.position.x += (nx - needleRig.position.x) * ease;
+  needleRig.position.y += (ny - needleRig.position.y) * ease;
   nozzle.visible = inp.gel && !lesion.done;
   nozzle.position.y = patch.heightAt(0, 0) + 0.12;
 
@@ -345,12 +381,14 @@ function toast(msg, refs) {
 
 function renderTabs() {
   $('#cu-tabs').innerHTML = LESION_TYPES.map((t) => `<button role="tab" aria-selected="${t === type}" class="cu-tab ${t === type ? 'active' : ''}" data-t="${t}">
-    <span>${TYPE_INFO[t].icon}</span>${TYPE_INFO[t].name}</button>`).join('');
+    <span>${INFO[t].icon}</span>${INFO[t].name}</button>`).join('');
   $('#cu-tabs').querySelectorAll('.cu-tab').forEach((b) => b.addEventListener('click', () => { sfx.click(); setType(b.dataset.t); }));
+  // 手機上分頁會橫向捲動，把選到的那個捲進畫面
+  $('#cu-tabs .cu-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 function renderInfo() {
-  const info = TYPE_INFO[type];
+  const info = INFO[type];
   const demo = type === 'pustule'
     ? `<p class="cu-demo">⚠️ 示範用。考試和現實中，化膿性痤瘡要請顧客看皮膚科醫師，不是擠掉。${refsHtml(['皮15'])}</p>` : '';
   $('#cu-info-body').innerHTML = `${demo}<p class="cu-how">${HOW[type]}</p><p>${info.fact}</p>${refsHtml(info.refs)}`;
@@ -386,9 +424,23 @@ $('#btn-mute').addEventListener('click', () => {
 // 手機上說明卡預設收起來
 if (matchMedia('(max-width: 640px)').matches) $('#cu-info').open = false;
 
+// 把痘痘放在上方 UI（分頁、說明卡）和下方 HUD 之間的空位正中間，不被說明蓋住
+function layoutView() {
+  const top = Math.max($('#cu-tabs').getBoundingClientRect().bottom, $('#cu-info').getBoundingClientRect().bottom);
+  const bottom = $('.cu-hud').getBoundingClientRect().top;
+  const shift = Math.round((top + bottom) / 2 - innerHeight / 2);
+  // 寬螢幕上說明卡在左邊，不擋中間，不用移
+  if (innerWidth > 640 || Math.abs(shift) < 4) camera.clearViewOffset();
+  else camera.setViewOffset(innerWidth, innerHeight, 0, -shift, innerWidth, innerHeight);
+  camera.updateProjectionMatrix();
+}
+$('#cu-info').addEventListener('toggle', layoutView);
+addEventListener('resize', layoutView);
+
 renderTabs();
 renderInfo();
 newLesion();
+layoutView();
 requestAnimationFrame(frame);
 
 // 給自動化測試用

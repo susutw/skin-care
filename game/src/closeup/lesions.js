@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import { DynTube } from './tube.js';
 import { clamp, easeOut, lerp } from '../util.js';
 
-// 四種痘痘的近距離版本。每一種都提供：
+// 五種痘痘的近距離版本。每一種都提供：
 //   height(x, z, r)  疊在皮膚高度場上的形狀（含加壓時的凹陷與鼓起）
 //   tint(x, z, r, out) 頂點顏色的乘數（泛紅、發白、膿頭、空毛孔）
-//   update(dt, inp)  inp = { loop, gel } 是否正在用粉刺棒 / 凝膠
+//   update(dt, inp)  inp = { loop, gel, needle } 是否正在用粉刺棒 / 凝膠 / 挑針
 // 座標都在皮膚區塊的局部空間：痘痘在原點，Y 軸朝外。
 
 const C = (hex) => new THREE.Color(hex);
@@ -41,10 +41,10 @@ const serumMat = () => new THREE.MeshPhysicalMaterial({
 });
 const glossy = (color, extra = {}) => new THREE.MeshPhysicalMaterial({ color, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.08, ...extra });
 
-export const LESION_TYPES = ['blackhead', 'whitehead', 'pustule', 'papule'];
+export const LESION_TYPES = ['blackhead', 'whitehead', 'closed', 'pustule', 'papule'];
 
 export function makeLesion(type, ctx) {
-  const L = { blackhead: Blackhead, whitehead: Whitehead, pustule: Pustule, papule: Papule }[type];
+  const L = { blackhead: Blackhead, whitehead: Whitehead, closed: Closed, pustule: Pustule, papule: Papule }[type];
   return new L(ctx);
 }
 
@@ -119,6 +119,9 @@ class Lesion {
 
   // 進度條顯示的數值
   get meter() { return this.progress; }
+
+  // 還沒擠完就按化妝棉時的提示
+  wipeHint() { return '還沒擠完呢，先用粉刺棒加壓～'; }
 
   local(x, y, z) { return new THREE.Vector3(x, y, z); }
   world(v) { return this.group.localToWorld(v.clone()); }
@@ -261,6 +264,7 @@ class Whitehead extends Lesion {
     this.domeR = 0.095 + r() * 0.03;
     this.domeH = 0.055 + r() * 0.03;
     this.L = 0.26 + r() * 0.14;
+    this.pasteR = 0.028;
     this.steamed = false;
     this.opened = false;
     this.drain = 0;
@@ -292,6 +296,8 @@ class Whitehead extends Lesion {
     this.dirty = true;
   }
 
+  wipeHint() { return this.steamed ? super.wipeHint() : '還沒清呢，先蒸臉再擠～'; }
+
   drawPaste() {
     const e = this.drain * this.L;
     if (e < 0.01) return this.tube.set([], [], []);
@@ -302,7 +308,7 @@ class Whitehead extends Lesion {
       pts.push(this.curve.getPointAt(Math.min(1, s / this.clen)));
       // 凹凸不平、像乳酪一樣的質地
       const bump = 0.5 * Math.sin(d * 55 + this.ph[0]) + 0.3 * Math.sin(d * 91 + this.ph[1]) + 0.2 * Math.sin(d * 143);
-      radii.push(0.028 * (1 + 0.2 * bump) * (s < 0.04 ? 0.8 : 1));
+      radii.push(this.pasteR * (1 + 0.2 * bump) * (s < 0.04 ? 0.8 : 1));
       cols.push(this.cols.a.clone().lerp(this.cols.b, 0.5 + 0.5 * bump));
     }
     this.tube.set(pts, radii, cols);
@@ -359,6 +365,146 @@ class Whitehead extends Lesion {
     if (!this.steamed) return '先按住「蒸臉」，軟化蓋在上面的角質';
     if (!this.opened) return this.press > 0.55 ? '表皮繃緊了…' : '用粉刺棒慢慢加壓';
     return '白白的出來了～';
+  }
+}
+
+// ---------------- 閉鎖性粉刺（閉口） ----------------
+// 膚色的小凸起，表面被角質封住、看不到開口。蒸臉軟化後要先用挑針淺淺挑開，粉刺棒才壓得出來。
+
+class Closed extends Whitehead {
+  constructor(ctx) {
+    super(ctx);
+    const r = this.rand;
+    this.kind = 'closed';
+    this.loopR = 0.22;
+    this.domeR = 0.09 + r() * 0.02;
+    this.domeH = 0.07 + r() * 0.02;
+    this.L = Math.min(0.15 + r() * 0.08, this.clen * 0.95);
+    this.pasteR = 0.021;
+    this.needleT = 0;
+    this.pricking = false;
+    this.bled = false;
+    this.pressT = 0;
+    // 不是白色，只是比周圍膚色亮一點點
+    this.PALE = new THREE.Vector3(1.07, 1.05, 1.02);
+    this.cols = { a: C('#f5eed9'), b: C('#e2d2a4') };
+    this.bead = new THREE.Mesh(ball, glossy('#9e1528'));
+    this.bead.visible = false;
+    this.bead.castShadow = true;
+    this.bead.scale.setScalar(0.001);
+    this.group.add(this.bead);
+  }
+
+  wipeHint() {
+    if (!this.steamed) return '還沒清呢，先蒸臉再挑開～';
+    return this.opened ? super.wipeHint() : '還沒開口呢，先用挑針挑開～';
+  }
+
+  open() {
+    this.opened = true;
+    this.dirty = true;
+    this.sfx.squelch(0.4);
+    vibrate(15);
+    this.fx.burst(this.world(this.local(0, this.patch.heightAt(0, 0), 0)), this.worldNormal(),
+      { n: 4, speed: 0.15, spread: 0.9, size: 0.004, life: 0.35, color: '#f3e6cf', gravity: 1 });
+    this.onOpened?.();
+  }
+
+  bleed() {
+    this.bled = true;
+    this.residual = Math.max(this.residual, 0.55);
+    this.dirty = true;
+    this.sfx.ouch();
+    vibrate([40, 30, 40]);
+    this.residues.push(this.bead);
+    this.toast('挑太深了，流血了！挑針只要斜斜挑開最表面的角質，刺進真皮會出血、留疤。', ['補充']);
+  }
+
+  update(dt, inp) {
+    this.setPress(inp.loop ? 1 : 0, dt);
+    this.pricking = inp.needle && this.steamed && !this.done;
+    if (inp.needle && !this.steamed && !this.warned) {
+      this.warned = true;
+      this.toast('角質還很硬，挑不開。先按住「蒸臉」軟化吧！', ['護37', '補充']);
+    }
+    // 挑針：按住一下就挑開，一直按著不放會越刺越深
+    if (this.pricking) {
+      this.needleT += dt;
+      if (!this.opened && this.needleT >= 0.5) this.open();
+      if (this.opened && !this.bled && this.needleT >= 1.8) this.bleed();
+    } else {
+      this.needleT = 0;
+    }
+
+    if (this.opened && this.steamed && !this.done) {
+      if (this.advance(dt, 0.4)) {
+        this.state = 'extruding';
+        this.drain = this.progress;
+        this.drawPaste();
+        this.squish(dt, 0.18);
+        if (this.progress >= 1) {
+          this.residual = Math.max(this.residual, 0.25);
+          this.sfx.squelch(1);
+          this.residues.push(this.tube.group);
+          this.complete();
+        }
+      }
+    } else if (!this.done && this.press > 0.8) {
+      // 沒有開口硬壓：什麼都出不來，皮膚只會被壓紅
+      if ((this.pressT += dt) >= 1.2) {
+        this.pressT = 0;
+        this.residual = Math.min(0.7, this.residual + 0.22);
+        this.dirty = true;
+        this.sfx.ouch();
+        vibrate([40, 30, 40]);
+        this.toast(this.steamed
+          ? '表面沒有開口，內容物出不來，反而把皮膚壓紅了。先用挑針挑個小開口！'
+          : '角質還硬、也沒有開口，壓不出來。先蒸臉，再用挑針挑開！', ['補充']);
+      }
+    } else {
+      this.pressT = 0;
+    }
+
+    // 血珠慢慢冒出來
+    if (this.bled && this.bead.scale.x < 0.011) {
+      const s = Math.min(0.011, this.bead.scale.x + dt * 0.02);
+      this.bead.visible = true;
+      this.bead.scale.set(s, s * 0.6, s);
+      this.bead.position.set(0.018, this.patch.heightAt(0.018, 0.012) + s * 0.25, 0.012);
+    }
+    this.fade(dt);
+  }
+
+  get meter() {
+    if (!this.opened) return Math.min(1, this.needleT / 0.5);
+    return this.progress;
+  }
+
+  height(x, z, r) {
+    let h = this.domeH * (1 - 0.75 * this.drain) * Math.exp(-((r / this.domeR) ** 2)) + this.pressShape(r);
+    if (this.opened) h -= (0.012 + 0.01 * this.drain) * Math.exp(-((r / 0.032) ** 2));
+    return h;
+  }
+
+  tint(x, z, r, out) {
+    out.lerp(this.PALE, (0.5 + 0.3 * this.press) * (1 - this.drain) * Math.exp(-((r / (this.domeR * 0.7)) ** 2)));
+    if (this.opened) {
+      // 挑開的小口：一圈暗暗的破口，中間露出一點白色硬芯
+      out.lerp(this.PIT, 0.85 * Math.exp(-((r / 0.036) ** 2)));
+      out.lerp(this.WHITE, 0.7 * (1 - this.drain) * Math.exp(-((r / 0.017) ** 2)));
+    }
+    out.lerp(this.RED, this.residual * Math.exp(-((r / 0.19) ** 2)));
+    this.pressTint(r, out);
+  }
+
+  stage() {
+    if (this.state === 'clean') return '乾淨了 ✨ 換下一顆吧';
+    if (this.done) return '清乾淨了！用化妝棉擦一擦';
+    if (!this.steamed) return '先按住「蒸臉」，軟化封住開口的角質';
+    if (!this.opened) return this.pricking ? '斜斜挑開最表面…' : '換「挑針」，在頂端挑一個小開口';
+    if (this.pricking) return this.bled ? '流血了！快放開挑針' : '開口了，可以放開了';
+    if (this.state !== 'extruding') return this.bled ? '有點出血…換粉刺棒輕輕壓' : '開口了！換粉刺棒慢慢加壓';
+    return this.press > 0.55 ? '小小的白色硬芯出來了～' : '再用力一點…';
   }
 }
 
