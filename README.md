@@ -8,7 +8,7 @@
 | 測驗 | `/skin-care/quiz/` | 每次從不重複題庫隨機抽 25 題，送出後對答案 |
 | 我的疑問 | `/skin-care/notes/` | 讀題庫時的疑問與解答，附各層細胞放大圖 |
 | 清粉刺小遊戲 | `/skin-care/game/` | 3D 美容師遊戲：依膚質蒸臉、清粉刺、轉介化膿痤瘡，提示附題號 |
-| 近距離療癒 | `/skin-care/game/closeup/` | 放大鏡下一次擠一顆：黑頭、白頭、膿皰（示範）、紅腫丘疹（凝膠） |
+| 近距離療癒 | `/skin-care/game/closeup/` | 放大鏡下一次擠一顆：黑頭、白頭、閉鎖性粉刺（挑針開口）、膿皰（示範）、紅腫丘疹（凝膠） |
 | 課程表 | `/skin-care/schedule/` | 皮膚管理服務人才培訓班 115/10/07–11/24 課表：今天／下一堂、依老師篩選、各課目時數 |
 
 ## 結構
@@ -25,7 +25,7 @@ tools/build.py        產生 index.html、quiz/、notes/、schedule/ 的 index.h
 game/                 清粉刺小遊戲（Three.js + ES modules，不需 build，部署時整個資料夾複製過去）
   src/data.js         顧客、膚質、工具與科普文字；refs 對應 questions.json 的題號
   closeup/            近距離療癒模式頁面
-  src/closeup/        可變形的皮膚區塊（patch.js）、四種痘痘的擠出過程（lesions.js）
+  src/closeup/        可變形的皮膚區塊（patch.js）、五種痘痘的擠出過程（lesions.js）
 ```
 
 題號 `id` 前綴：`皮`＝工作項目 01 皮膚認識、`護`＝工作項目 02 護膚、`化`＝共同科目 90012 化粧品認識。
