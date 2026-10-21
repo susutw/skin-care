@@ -39,19 +39,23 @@
   <div class="cu-lens" aria-hidden="true"></div>
 
   <header class="cu-top">
-    <nav class="crumbs"><a href="../">← 粉刺沙龍</a><a href="../../">講義</a><a href="../../quiz/">測驗</a></nav>
+    <nav class="crumbs"><a href="../" aria-label="回粉刺沙龍">←<span class="cu-crumb-text"> 粉刺沙龍</span></a><a href="../../">講義</a><a href="../../quiz/">測驗</a></nav>
     <h1>近距離療癒</h1>
+    <nav id="cu-tabs" class="cu-tabs" role="tablist" aria-label="痘痘種類"></nav>
     <div class="cu-right">
-      <span class="cu-count">已清出 <b id="cu-count">0</b> 顆</span>
-      <button id="btn-mute" class="icon-btn" aria-label="切換音效">🔊</button>
+      <span class="cu-count">已清出 <b class="cu-count-n">0</b> 顆</span>
+      <button class="icon-btn cu-mute" aria-label="切換音效">🔊</button>
+      <button id="cu-info-btn" class="icon-btn" aria-label="說明" aria-controls="cu-info" aria-expanded="false">ⓘ</button>
     </div>
   </header>
-
-  <nav id="cu-tabs" class="cu-tabs" role="tablist" aria-label="痘痘種類"></nav>
 
   <details id="cu-info" class="cu-info" open>
     <summary id="cu-info-title"></summary>
     <div id="cu-info-body"></div>
+    <div class="cu-sheet-foot">
+      <span>已清出 <b class="cu-count-n">0</b> 顆</span>
+      <button class="cu-mute" aria-label="切換音效">🔊</button>
+    </div>
   </details>
 
   <div class="cu-hud">
@@ -59,6 +63,7 @@
     <p id="cu-stage" class="cu-stage" aria-live="polite"></p>
     <p class="cu-hint">左鍵 / 單指按住加壓・右鍵 / 雙指旋轉縮放</p>
   </div>
+  <button id="cu-press" class="cu-press" aria-label="按住加壓"><span id="cu-press-icon">➰</span><b>按住</b></button>
   <nav id="toolbar"></nav>
   <div id="toast" class="toast" hidden></div>
 

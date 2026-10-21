@@ -27,6 +27,7 @@ const KIT = {
   pustule: ['loop', 'wipe', 'next'],
   papule: ['gel', 'loop', 'next'],
 };
+const SHORT = { blackhead: '黑頭', whitehead: '白頭', pustule: '膿皰', papule: '丘疹' };
 const HOW = {
   blackhead: '按住畫面（或空白鍵）用粉刺棒慢慢加壓，力道夠了，皮脂栓就會被推出來。',
   whitehead: '先按住「蒸臉」軟化角質，再用粉刺棒加壓。表皮破開後，白色內容物會被擠出來。',
@@ -35,6 +36,9 @@ const HOW = {
 };
 
 const $ = (s) => document.querySelector(s);
+const $$ = (s) => document.querySelectorAll(s);
+// 手機直式：上面只留一列，痘痘往上移，拇指在下面按「按住」就不會擋到
+const mobile = matchMedia('(max-width: 640px)');
 const save = (() => {
   try { return { count: 0, muted: false, ...JSON.parse(localStorage.getItem(SAVE_KEY) || '{}') }; } catch { return { count: 0, muted: false }; }
 })();
@@ -97,7 +101,10 @@ function resize() {
   renderer.setSize(innerWidth, innerHeight, false);
   camera.aspect = innerWidth / innerHeight;
   // 直式手機稍微退遠一點
-  camera.fov = camera.aspect < 0.8 ? 52 : 38;
+  camera.fov = camera.aspect < 0.8 ? (mobile.matches ? 46 : 52) : 38;
+  // 手機上把畫面往上推，痘痘落在上半部，下面留給拇指和按鈕
+  if (mobile.matches) camera.setViewOffset(innerWidth, innerHeight, 0, innerHeight * 0.09, innerWidth, innerHeight);
+  else camera.clearViewOffset();
   camera.updateProjectionMatrix();
 }
 resize();
@@ -154,7 +161,7 @@ function newLesion() {
   lesion.onDone = () => {
     save.count++;
     store();
-    $('#cu-count').textContent = save.count;
+    showCount();
     if (KIT[type].includes('wipe')) highlight('wipe');
     else highlight('next');
   };
@@ -177,15 +184,27 @@ function setType(t) {
 function setHolding(on) {
   if (on === holding) return;
   holding = on;
+  document.body.classList.toggle('cu-pressing', on);
+  $('#cu-press').classList.toggle('down', on);
   holdSnd?.stop();
   holdSnd = on && (tool === 'loop' || tool === 'steam') ? holdSound(tool === 'loop' ? 'squeeze' : 'steam') : null;
 }
 
 canvas.addEventListener('pointerdown', (e) => {
   if (e.pointerType === 'mouse' && e.button !== 0) return;
+  // 手機上說明開著時，點畫面只是把它收起來
+  if (mobile.matches && $('#cu-info').open) return setInfo(false);
   pointers.add(e.pointerId);
   setHolding(pointers.size === 1 && !wipe);
 });
+const press = $('#cu-press');
+press.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  setInfo(false);
+  pointers.add(e.pointerId);
+  setHolding(!wipe);
+});
+press.addEventListener('contextmenu', (e) => e.preventDefault());
 const release = (e) => {
   pointers.delete(e.pointerId);
   if (!pointers.size) setHolding(false);
@@ -321,7 +340,11 @@ function frame(now) {
   const st = lesion.stage();
   if (st !== lastStage) $('#cu-stage').textContent = lastStage = st;
   const m = Math.round(lesion.meter * 100);
-  if (m !== lastMeter) $('#cu-bar').style.width = `${(lastMeter = m)}%`;
+  if (m !== lastMeter) {
+    $('#cu-bar').style.width = `${(lastMeter = m)}%`;
+    press.style.setProperty('--m', `${m}%`);
+  }
+  press.classList.toggle('spent', !!wipe || lesion.done);
   requestAnimationFrame(frame);
 }
 
@@ -345,7 +368,7 @@ function toast(msg, refs) {
 
 function renderTabs() {
   $('#cu-tabs').innerHTML = LESION_TYPES.map((t) => `<button role="tab" aria-selected="${t === type}" class="cu-tab ${t === type ? 'active' : ''}" data-t="${t}">
-    <span>${TYPE_INFO[t].icon}</span>${TYPE_INFO[t].name}</button>`).join('');
+    <span>${TYPE_INFO[t].icon}</span><span class="cu-tab-full">${TYPE_INFO[t].name}</span><span class="cu-tab-short">${SHORT[t]}</span></button>`).join('');
   $('#cu-tabs').querySelectorAll('.cu-tab').forEach((b) => b.addEventListener('click', () => { sfx.click(); setType(b.dataset.t); }));
 }
 
@@ -368,6 +391,7 @@ function renderTools() {
     tool = t;
     renderTools();
   }));
+  $('#cu-press-icon').textContent = TOOLS[tool].icon;
 }
 
 function highlight(t) {
@@ -375,16 +399,24 @@ function highlight(t) {
   b?.classList.add('nudge');
 }
 
-$('#cu-count').textContent = save.count;
-$('#btn-mute').textContent = save.muted ? '🔇' : '🔊';
-$('#btn-mute').addEventListener('click', () => {
+function setInfo(open) {
+  $('#cu-info').open = open;
+  $('#cu-info-btn').setAttribute('aria-expanded', open);
+}
+
+const showCount = () => $$('.cu-count-n').forEach((b) => (b.textContent = save.count));
+const showMute = () => $$('.cu-mute').forEach((b) => (b.textContent = save.muted ? '🔇' : '🔊'));
+showCount();
+showMute();
+$$('.cu-mute').forEach((b) => b.addEventListener('click', () => {
   save.muted = !isMuted();
   setMuted(save.muted);
-  $('#btn-mute').textContent = save.muted ? '🔇' : '🔊';
+  showMute();
   store();
-});
+}));
+$('#cu-info-btn').addEventListener('click', () => setInfo(!$('#cu-info').open));
 // 手機上說明卡預設收起來
-if (matchMedia('(max-width: 640px)').matches) $('#cu-info').open = false;
+if (mobile.matches) setInfo(false);
 
 renderTabs();
 renderInfo();

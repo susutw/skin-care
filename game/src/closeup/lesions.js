@@ -243,7 +243,7 @@ class Blackhead extends Lesion {
   stage() {
     if (this.state === 'clean') return '乾淨了 ✨ 換下一顆吧';
     if (this.done) return '擠乾淨了！用化妝棉擦一擦';
-    if (this.state === 'idle') return '按住畫面，用粉刺棒慢慢加壓';
+    if (this.state === 'idle') return '按住加壓，用粉刺棒慢慢擠';
     return this.press > 0.55 ? '出來了…慢慢來～' : '再用力一點…';
   }
 }
