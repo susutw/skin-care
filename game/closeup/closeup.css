@@ -138,14 +138,120 @@ body.closeup { cursor: default; }
   .tool.nudge { animation: none; outline: 2px solid var(--accent); }
 }
 
+/* 手機才用得到的元件，桌機先藏起來 */
+.cu-tab-short, #cu-info-btn, .cu-sheet-foot, .cu-press { display: none; }
+
 @media (max-width: 640px) {
-  .cu-top { flex-wrap: wrap; gap: 8px; }
-  .cu-top h1 { font-size: 20px; }
+  /* 上方收成一列：← ｜ 四個分頁 ｜ ⓘ，其他都收進說明卡 */
+  .cu-top { left: 12px; right: 12px; top: max(10px, env(safe-area-inset-top)); gap: 6px; transition: opacity 0.25s; }
+  .cu-top h1, .cu-count, .cu-top .cu-mute, .cu-crumb-text { display: none; }
   .cu-top .crumbs a:not(:first-child) { display: none; }
-  .cu-tabs { top: calc(max(12px, env(safe-area-inset-top)) + 52px); }
-  .cu-tab { padding: 8px 10px; font-size: 13px; }
-  .cu-info { top: auto; bottom: calc(max(16px, env(safe-area-inset-bottom)) + 180px); }
-  .cu-hint { display: none; }
-  /* 提示改放在分頁下面，不要蓋住底下的狀態文字 */
-  body.closeup .toast { bottom: auto; top: calc(max(12px, env(safe-area-inset-top)) + 110px); }
+  .cu-top .crumbs a:first-child {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    font-size: 18px;
+  }
+  .cu-right { margin-left: 0; }
+  #cu-info-btn { display: grid; place-items: center; width: 36px; height: 36px; font-size: 18px; }
+  .cu-tabs {
+    position: static;
+    transform: none;
+    flex: 1;
+    min-width: 0;
+    justify-content: space-between;
+    gap: 2px;
+    padding: 3px;
+    box-shadow: none;
+  }
+  .cu-tab { flex: 1; justify-content: center; gap: 3px; padding: 7px 4px; font-size: 13px; }
+  .cu-tab > span:first-child { font-size: 11px; }
+  .cu-tab-full { display: none; }
+  .cu-tab-short { display: inline; }
+
+  /* 說明卡：按 ⓘ 才從上面展開，點畫面就收起來 */
+  .cu-info {
+    top: calc(max(10px, env(safe-area-inset-top)) + 50px);
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: 55vh;
+    overflow-y: auto;
+    font-size: 13.5px;
+  }
+  .cu-info:not([open]) { display: none; }
+  .cu-info summary { list-style: none; pointer-events: none; }
+  .cu-info summary::-webkit-details-marker { display: none; }
+  .cu-sheet-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .cu-sheet-foot .cu-mute { border: 0; background: var(--accent-soft); border-radius: 999px; padding: 4px 12px; font-size: 16px; }
+
+  /* 底部：狀態文字 → 「按住」大按鈕（外圈就是進度）→ 工具列 */
+  .cu-hud { bottom: calc(max(12px, env(safe-area-inset-bottom)) + 168px); }
+  .cu-meter, .cu-hint { display: none; }
+  .cu-stage { margin: 0; font-size: 16px; }
+  .cu-press {
+    --m: 0%;
+    position: fixed;
+    left: 50%;
+    bottom: calc(max(12px, env(safe-area-inset-bottom)) + 82px);
+    transform: translateX(-50%);
+    width: 76px;
+    height: 76px;
+    border: 0;
+    border-radius: 50%;
+    padding: 5px;
+    display: grid;
+    place-items: center;
+    background: conic-gradient(var(--accent) var(--m), var(--line) 0);
+    box-shadow: var(--shadow);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .cu-press::before {
+    content: '';
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: var(--card-solid);
+    transition: transform 0.12s, background 0.12s;
+  }
+  .cu-press > * { position: relative; line-height: 1; pointer-events: none; }
+  .cu-press span { font-size: 22px; margin-top: 6px; }
+  .cu-press b { font-size: 13px; margin-bottom: 8px; color: var(--accent); }
+  .cu-press.down::before { transform: scale(0.9); background: var(--accent-soft); }
+  .cu-press.spent { opacity: 0.4; }
+
+  #toolbar { bottom: max(12px, env(safe-area-inset-bottom)); gap: 4px; padding: 5px; border-radius: 20px; transition: opacity 0.25s; }
+  .tool { width: 60px; padding: 5px 2px 4px; border-radius: 14px; }
+  .tool.active { transform: none; }
+  .tool-icon { font-size: 20px; }
+
+  .cu-lens { background: radial-gradient(ellipse 75% 55% at 50% 41%, transparent 55%, var(--bg-1) 100%); }
+
+  /* 提示放在上方那一列下面，精簡一點 */
+  body.closeup .toast {
+    bottom: auto;
+    top: calc(max(10px, env(safe-area-inset-top)) + 50px);
+    width: calc(100vw - 24px);
+    padding: 8px 12px;
+    gap: 8px;
+  }
+  body.closeup .toast p { font-size: 13px; line-height: 1.5; }
+
+  /* 正在擠的時候，周圍的東西退開，只看痘痘 */
+  body.cu-pressing .cu-top, body.cu-pressing #toolbar { opacity: 0.2; }
+  body.cu-pressing .toast { display: none; }
 }
