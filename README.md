@@ -15,7 +15,7 @@
 
 ```
 data/questions.json   不重複題庫（236 題，原 262 題刪去 26 題重複／同考點題目）
-data/schedule.json    培訓班課表（36 天、240 節），連續同課目的節次合併成一段 from–to
+data/schedule.json    培訓班課表（37 天、240 節），連續同課目的節次合併成一段 from–to
 src/handout.html      講義模板，{{SKIN}} 等佔位會換成 tools/svgs.py 產生的圖
 src/quiz.html         測驗模板，{{DATA}} 會換成題庫
 src/notes.html        我的疑問頁，細胞圖由 tools/cells.py 產生
